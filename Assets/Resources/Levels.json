@@ -1,0 +1,25 @@
+{
+  "levels": [
+    {
+      "ID": 1,
+      "dimensions": [3,3],
+      "grid":
+      [
+        "MMM",
+        "MLM",
+        "MMM"
+      ]
+    },
+    {
+      "ID": 2,
+      "dimensions": [4,4],
+      "grid": 
+      [
+        "AMMA",
+        "MLPM",
+        "MPLM",
+        "AMMA"
+      ]
+    }
+  ]
+}
