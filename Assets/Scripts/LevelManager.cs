@@ -6,21 +6,36 @@ using System.Linq;
 using AYellowpaper.SerializedCollections;
 public class LevelManager : MonoBehaviour
 {
-    [SerializedDictionary("Character Key", "Tile Prefab")]
-    public SerializedDictionary<string, GameObject> prefabDictionary;
-
-    public string levelsPath = "Levels"; //Resources/...
+    [Header("Generation")]
     [SerializeField] int levelIDToLoad = 1;
+    public SerializedDictionary<string, GameObject> prefabDictionary;
+    public string levelsPath = "Levels"; //Resources/...
 
-    [SerializeField]GameObject grid;
-    GameObject[,] levelTiles;
+    [Header("SpawnAnimation")]
+    [SerializeField] float spawnTime;
+    [SerializeField] float spawnIncrease;
+    [SerializeField] AnimationCurve spawnCurve;
+
+    [Header("Management")]
+    bool levelLoaded = false;
+    [SerializeField] GameObject grid;
+    TileController[,] levelTiles;
 
     void Start()
     {
-        LoadLevel(levelIDToLoad);
+        //LoadLevel(levelIDToLoad);
     }
-    public void LoadLevel(int id)
+    private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Alpha1) && !levelLoaded) LoadLevel(1);
+        if(Input.GetKeyDown(KeyCode.Alpha2) && !levelLoaded) LoadLevel(2);
+        if(Input.GetKeyDown(KeyCode.Alpha3) && !levelLoaded) LoadLevel(3);
+        if(Input.GetKeyDown(KeyCode.Delete) && levelLoaded) DestroyLevel();
+    }
+    #region Generation
+    void LoadLevel(int id)
+    {
+        levelLoaded = true;
         #region LoadJSON
         TextAsset jsonData = Resources.Load<TextAsset>(levelsPath);
         if (jsonData == null)
@@ -39,7 +54,8 @@ public class LevelManager : MonoBehaviour
         }
         #endregion
         #region Generation
-        levelTiles = new GameObject[level.dimensions[0], level.dimensions[1]];
+        float st = spawnTime;
+        levelTiles = new TileController[level.dimensions[0], level.dimensions[1]];
         for (int y = 0; y < level.dimensions[1]; y++)
         {
             string row = level.grid[y];
@@ -48,10 +64,11 @@ public class LevelManager : MonoBehaviour
                 string slotKey = row[x].ToString();
                 if (prefabDictionary.ContainsKey(slotKey))
                 {
-                    Vector3 pos = new Vector3(x, 0, -y);
-                    Debug.Log($"{x},{y}: {slotKey} -> {prefabDictionary[slotKey].name}");
+                    Vector3 pos = new Vector3(x, -1, -y);
                     GameObject i = Instantiate(prefabDictionary[slotKey], pos, Quaternion.identity, grid.transform);
-                    levelTiles[x, y] = i;
+                    levelTiles[x, y] = i.GetComponent<TileController>();
+                    StartCoroutine(i.GetComponent<TileController>().SummonTile(st, spawnCurve));
+                    st += spawnIncrease;
                 }
                 else
                 {
@@ -61,6 +78,16 @@ public class LevelManager : MonoBehaviour
         }
         #endregion
     }
+    void DestroyLevel()
+    {
+        foreach (var level in levelTiles)
+        {
+            level.StopAllCoroutines();
+            Destroy(level.gameObject);
+        }
+        levelLoaded = false;
+    }
+    #endregion
     private string FixJsonArray(string rawJson)
     {
         if (rawJson.TrimStart().StartsWith("{")) return rawJson;

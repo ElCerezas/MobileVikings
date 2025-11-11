@@ -20,6 +20,21 @@
         "MPLM",
         "AMMA"
       ]
+    },
+    {
+      "ID": 3,
+      "dimensions": [8,8],
+      "grid": 
+      [
+        "MMMMMMMM",
+        "MMMLMMMM",
+        "MMMMMMMM",
+        "MMMMPMMM",
+        "MMMMMMMM",
+        "MMAMMMMM",
+        "MMMMMMMM",
+        "MMMMMMMM"
+      ]
     }
   ]
 }
