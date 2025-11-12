@@ -11,6 +11,8 @@ public class LevelManager : MonoBehaviour
     public SerializedDictionary<string, GameObject> prefabDictionary;
     public string levelsPath = "Levels"; //Resources/...
 
+    [SerializeField] Quaternion rotation;
+
     [Header("SpawnAnimation")]
     [SerializeField] float spawnTime;
     [SerializeField] float spawnIncrease;
@@ -54,7 +56,7 @@ public class LevelManager : MonoBehaviour
         }
         #endregion
         #region Generation
-        float st = spawnTime;
+        float delay = spawnIncrease;
         levelTiles = new TileController[level.dimensions[0], level.dimensions[1]];
         for (int y = 0; y < level.dimensions[1]; y++)
         {
@@ -64,11 +66,12 @@ public class LevelManager : MonoBehaviour
                 string slotKey = row[x].ToString();
                 if (prefabDictionary.ContainsKey(slotKey))
                 {
+                    delay = spawnIncrease * Mathf.Min(level.dimensions[0] - x, level.dimensions[1] - y);
                     Vector3 pos = new Vector3(x, -1, -y);
-                    GameObject i = Instantiate(prefabDictionary[slotKey], pos, Quaternion.identity, grid.transform);
+                    GameObject i = Instantiate(prefabDictionary[slotKey], pos, rotation, grid.transform);
                     levelTiles[x, y] = i.GetComponent<TileController>();
-                    StartCoroutine(i.GetComponent<TileController>().SummonTile(st, spawnCurve));
-                    st += spawnIncrease;
+                    StartCoroutine(i.GetComponent<TileController>().SummonTile(spawnTime, delay, spawnCurve));
+                    
                 }
                 else
                 {
