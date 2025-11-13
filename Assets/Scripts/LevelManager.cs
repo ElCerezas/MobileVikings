@@ -17,14 +17,19 @@ public class LevelManager : MonoBehaviour
     [SerializeField] float spawnTime;
     [SerializeField] float spawnIncrease;
     [SerializeField] AnimationCurve spawnCurve;
+    [SerializeField] float gridOffsetY = 0;
 
     [Header("Management")]
     bool levelLoaded = false;
     [SerializeField] GameObject grid;
     TileController[,] levelTiles;
+    [SerializeField] GameObject camera;
+    [SerializeField] Vector3 cameraBasePos = new Vector3(0, 3.5f, 4);
+    [SerializeField] float cameraDistance;
 
     void Start()
     {
+        camera.transform.position = cameraBasePos;
         //LoadLevel(levelIDToLoad);
     }
     private void Update()
@@ -58,6 +63,7 @@ public class LevelManager : MonoBehaviour
         #region Generation
         float delay = spawnIncrease;
         levelTiles = new TileController[level.dimensions[0], level.dimensions[1]];
+        SetGridPosition(level);
         for (int y = 0; y < level.dimensions[1]; y++)
         {
             string row = level.grid[y];
@@ -67,8 +73,9 @@ public class LevelManager : MonoBehaviour
                 if (prefabDictionary.ContainsKey(slotKey))
                 {
                     delay = spawnIncrease * Mathf.Min(level.dimensions[0] - x, level.dimensions[1] - y);
-                    Vector3 pos = new Vector3(x, -1, -y);
-                    GameObject i = Instantiate(prefabDictionary[slotKey], pos, rotation, grid.transform);
+                    Vector3 pos = new Vector3(x, -1, -y-1);
+                    GameObject i = Instantiate(prefabDictionary[slotKey], pos, rotation, grid.transform);   
+                    i.transform.localPosition = pos;
                     levelTiles[x, y] = i.GetComponent<TileController>();
                     StartCoroutine(i.GetComponent<TileController>().SummonTile(spawnTime, delay, spawnCurve));
                     
@@ -80,6 +87,10 @@ public class LevelManager : MonoBehaviour
             }
         }
         #endregion
+    }
+    void SetGridPosition(LevelData l)
+    {
+        grid.transform.position = new Vector3(-(l.dimensions[1] / 2f), 0, (l.dimensions[1] + gridOffsetY));
     }
     void DestroyLevel()
     {
