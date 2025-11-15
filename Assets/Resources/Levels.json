@@ -2,16 +2,24 @@
   "levels": [
     {
       "ID": 1,
+      "playerSpawnRows": 1,
       "dimensions": [3,3],
       "grid":
       [
         "MMM",
         "LAP",
         "LAP"
+      ],
+      "enemies":
+      [
+        "ASA",
+        "XXX",
+        "XXX"
       ]
     },
     {
       "ID": 2,
+      "playerSpawnRows": 1,
       "dimensions": [4,4],
       "grid": 
       [
@@ -19,10 +27,18 @@
         "MLPM",
         "MPLM",
         "AMMA"
+      ],
+      "enemies":
+      [
+        "AXXA",
+        "XSSX",
+        "XXXX",
+        "XXXX"
       ]
     },
     {
       "ID": 3,
+      "playerSpawnRows": 2,
       "dimensions": [8,8],
       "grid": 
       [
@@ -34,6 +50,17 @@
         "MMAMMMMM",
         "MMMMMMMM",
         "MMMMMMMM"
+      ],
+      "enemies":
+      [
+        "XXSXXSXX",
+        "XXXAAXXX",
+        "XXSAASXX",
+        "XXXXXXXX",
+        "XXXSSXXX",
+        "XXXXXXXX",
+        "XXXXXXXX",
+        "XXXXXXXX"
       ]
     }
   ]

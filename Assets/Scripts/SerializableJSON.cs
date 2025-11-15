@@ -5,8 +5,13 @@ using UnityEngine;
 public class LevelData
 {
     public int ID;
+    public int playerSpawnRows;
+    public int selectableHeroes;
+
+    public float placingTime;
     public int[] dimensions;
     public List<string> grid;
+    public List<string> enemies;
 }
 
 [System.Serializable]

@@ -1,16 +1,35 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.IO;
 using System;
 using System.Linq;
 using AYellowpaper.SerializedCollections;
+enum LevelPhase
+{
+    Generate, SelectClass, SelectSubClass, PlaceHeroes, Combat, EndLevel
+}
 public class LevelManager : MonoBehaviour
 {
-    [Header("Generation")]
-    [SerializeField] int levelIDToLoad = 1;
-    public SerializedDictionary<string, GameObject> prefabDictionary;
-    public string levelsPath = "Levels"; //Resources/...
+    public static LevelManager instance;
+    [SerializeField] LevelPhase phase = LevelPhase.Generate;
 
+    [Header("CustomUpdate")]
+    [SerializeField] float timeUntilTurn = 1f;
+    [SerializeField] float actualTime = 1f;
+    public static event Action<float> OnGameUpdate;
+
+    [Header("Lists of Characters")]
+    [SerializeField] GameObject grid;
+    [SerializeField] List<CharacterBase> enemmies;
+    [SerializeField] List<CharacterBase> heroes;
+    TileController[,] levelTiles;
+
+    [Header("Dictionaries")]
+    public SerializedDictionary<string, GameObject> terrainDictionary;
+    public SerializedDictionary<string, GameObject> enemiesDictionary;
+    public SerializedDictionary<string, GameObject> heroesDictionary;
+
+    [Header("Generation")]
+    public string levelsPath = "Levels"; //Resources/...
     [SerializeField] Quaternion rotation;
 
     [Header("SpawnAnimation")]
@@ -19,31 +38,29 @@ public class LevelManager : MonoBehaviour
     [SerializeField] AnimationCurve spawnCurve;
     [SerializeField] float gridOffsetY = 0;
 
-    [Header("Management")]
-    bool levelLoaded = false;
-    [SerializeField] GameObject grid;
-    TileController[,] levelTiles;
-    [SerializeField] GameObject camera;
-    [SerializeField] Vector3 cameraBasePos = new Vector3(0, 3.5f, 4);
-    [SerializeField] float cameraDistance;
-
-    void Start()
+    private void Awake()
     {
-        camera.transform.position = cameraBasePos;
-        //LoadLevel(levelIDToLoad);
+        instance = this;
     }
-    private void Update()
+    private void Start()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1) && !levelLoaded) LoadLevel(1);
-        if(Input.GetKeyDown(KeyCode.Alpha2) && !levelLoaded) LoadLevel(2);
-        if(Input.GetKeyDown(KeyCode.Alpha3) && !levelLoaded) LoadLevel(3);
-        if(Input.GetKeyDown(KeyCode.Delete) && levelLoaded) DestroyLevel();
+        LoadLevel();
     }
-    #region Generation
-    void LoadLevel(int id)
+    void Update()
     {
-        levelLoaded = true;
-        #region LoadJSON
+        if (phase == LevelPhase.Combat)
+        {
+            actualTime += Time.deltaTime;
+            if (actualTime > timeUntilTurn)
+            {
+                actualTime -= timeUntilTurn;
+            }
+        }
+        
+    }
+    public void LoadLevel()
+    {
+        int id = 2; //TO FIX
         TextAsset jsonData = Resources.Load<TextAsset>(levelsPath);
         if (jsonData == null)
         {
@@ -53,31 +70,33 @@ public class LevelManager : MonoBehaviour
 
         LevelList allLevels = JsonUtility.FromJson<LevelList>(FixJsonArray(jsonData.text));
         LevelData level = allLevels.levels.FirstOrDefault(l => l.ID == id);
-
         if (level == null)
         {
             Debug.LogError("No existeix el nivell: " + id);
             return;
         }
-        #endregion
-        #region Generation
         float delay = spawnIncrease;
         levelTiles = new TileController[level.dimensions[0], level.dimensions[1]];
-        SetGridPosition(level);
+        grid.transform.position = new Vector3(-(level.dimensions[1] / 2f), 0, (level.dimensions[1] + gridOffsetY));
         for (int y = 0; y < level.dimensions[1]; y++)
         {
             string row = level.grid[y];
             for (int x = 0; x < level.dimensions[0]; x++)
             {
                 string slotKey = row[x].ToString();
-                if (prefabDictionary.ContainsKey(slotKey))
+                if (terrainDictionary.ContainsKey(slotKey))
                 {
                     delay = spawnIncrease * Mathf.Min(level.dimensions[0] - x, level.dimensions[1] - y);
                     Vector3 pos = new Vector3(x, -1, -y-1);
-                    GameObject i = Instantiate(prefabDictionary[slotKey], pos, rotation, grid.transform);   
+                    GameObject i = Instantiate(terrainDictionary[slotKey], pos, rotation, grid.transform);   
                     i.transform.localPosition = pos;
                     levelTiles[x, y] = i.GetComponent<TileController>();
-                    StartCoroutine(i.GetComponent<TileController>().SummonTile(spawnTime, delay, spawnCurve));
+                    levelTiles[x,y].SetCoord(x, y);
+                    if (y > level.dimensions[1] - level.playerSpawnRows)
+                    {
+                        levelTiles[x, y].PlayerCanSpawn = true;
+                        StartCoroutine(levelTiles[x, y].SummonTile(spawnTime, delay, spawnCurve));
+                    }
                     
                 }
                 else
@@ -86,22 +105,26 @@ public class LevelManager : MonoBehaviour
                 }
             }
         }
-        #endregion
-    }
-    void SetGridPosition(LevelData l)
-    {
-        grid.transform.position = new Vector3(-(l.dimensions[1] / 2f), 0, (l.dimensions[1] + gridOffsetY));
-    }
-    void DestroyLevel()
-    {
-        foreach (var level in levelTiles)
+        for (int y = 0; y < level.dimensions[1]; y++)
         {
-            level.StopAllCoroutines();
-            Destroy(level.gameObject);
+            string row = level.enemies[y];
+            for (int x = 0; x < level.dimensions[0]; x++)
+            {
+                string enemyKey = row[x].ToString();
+                if (enemiesDictionary.ContainsKey(enemyKey))
+                {
+                    GameObject i = Instantiate(enemiesDictionary[enemyKey], Vector3.zero, Quaternion.identity, levelTiles[x, y].transform);
+                    i.transform.position = levelTiles[x, y].terrainFloor.position;
+                    enemmies.Add(i.GetComponent<CharacterBase>());
+                    levelTiles[x, y].SetCharacter(i.GetComponent<CharacterBase>()); 
+                }
+                else
+                {
+                    Debug.Log(enemyKey + "-> Not Found");
+                }
+            }
         }
-        levelLoaded = false;
     }
-    #endregion
     private string FixJsonArray(string rawJson)
     {
         if (rawJson.TrimStart().StartsWith("{")) return rawJson;
