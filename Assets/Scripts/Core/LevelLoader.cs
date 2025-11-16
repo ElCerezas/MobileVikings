@@ -1,4 +1,5 @@
 using AYellowpaper.SerializedCollections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -38,10 +39,41 @@ public class LevelLoader : MonoBehaviour
                     Vector3 pos = new Vector3(x, 0, -y - 1);
                     GameObject i = Instantiate(terrainDictionary[slotKey], pos, rotation, tileGrid.transform);
                     i.transform.localPosition = pos;
+                    tileGrid.SetTile(x, y, i.GetComponent<Tile>());
                 }
                 else
                 {
                     Debug.Log($"Key no trobada -> {slotKey}");
+                }
+            }
+        }
+
+        for (int y = 0; y < level.dimensions[1]; y++)
+        {
+            string row = level.enemies[y];
+            for (int x = 0; x < level.dimensions[0]; x++)
+            {
+                string enemyKey = row[x].ToString();
+                if (enemiesDictionary.ContainsKey(enemyKey))
+                {
+                    Tile tile = tileGrid.GetTile(x, y);
+                    GameObject i = Instantiate(enemiesDictionary[enemyKey], Vector3.zero, Quaternion.identity, tile.transform);
+                    i.transform.position = tile.GetGroundPos();
+
+                    Entity entity = i.GetComponent<Entity>();
+                    if (entity == null)
+                    {
+                        Debug.LogError($"Prefab does not contain an Entity component.");
+                        continue;
+                    }
+
+                    tile.occupant = entity;
+                    entity.currentTile = tile;
+                    tileGrid.enemies.Add(i.GetComponent<Entity>());
+                }
+                else
+                {
+                    Debug.Log(enemyKey + "-> Not Found");
                 }
             }
         }

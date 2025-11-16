@@ -4,9 +4,10 @@ public abstract class Entity : MonoBehaviour
 {
     public EntityData data;
     public Tile currentTile;
-    public void Initialize(EntityData data)
+
+    public void Initialize(EntityData d)
     {
-        this.data = data;
+        data = d;
     }
     public void OnTick(int tick)
     {

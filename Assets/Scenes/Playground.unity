@@ -440,7 +440,11 @@ MonoBehaviour:
     - Key: P
       Value: {fileID: 4020171833401176880, guid: 4ca0b079ed0215846a6d91e3e0a6b981, type: 3}
   enemiesDictionary:
-    _serializedList: []
+    _serializedList:
+    - Key: S
+      Value: {fileID: 1089935867908778548, guid: 14a1a3c0f9acd7141814e6be0ff394fa, type: 3}
+    - Key: A
+      Value: {fileID: 1089935867908778548, guid: 36daed8dc112dcc4bb00c458bb6c0783, type: 3}
 --- !u!1 &931265873
 GameObject:
   m_ObjectHideFlags: 0
@@ -485,6 +489,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48a641073550afb48a18f2c4d80c3ab8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TileGrid
+  enemies: []
+  heroes: []
 --- !u!1 &1146980954
 GameObject:
   m_ObjectHideFlags: 0

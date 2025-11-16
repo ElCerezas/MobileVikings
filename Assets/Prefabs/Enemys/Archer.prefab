@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 442814045414792341}
   - component: {fileID: 4105452939247475667}
   - component: {fileID: 8858428050605947548}
+  - component: {fileID: -3762188872133716201}
   m_Layer: 0
   m_Name: Archer
   m_TagString: Untagged
@@ -89,3 +90,17 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &-3762188872133716201
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1089935867908778548}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8eaa56488b00f2b47b2850606c2edaab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Enemy
+  data: {fileID: 11400000, guid: 035fb37b66987854f9e2ec3d898c4bb9, type: 2}
+  currentTile: {fileID: 0}

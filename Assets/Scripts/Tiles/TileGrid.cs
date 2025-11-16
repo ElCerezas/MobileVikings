@@ -1,7 +1,11 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class TileGrid : MonoBehaviour
 {
+    [Header("Lists")]
+    public List<Entity> enemies;
+    public List<Entity> heroes;
     Tile[,] tiles;
     Vector2Int dimensions;
     public void Initialize(int w, int h)
