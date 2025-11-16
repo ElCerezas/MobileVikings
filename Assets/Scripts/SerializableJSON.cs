@@ -9,6 +9,7 @@ public class LevelData
     public int selectableHeroes;
 
     public float placingTime;
+
     public int[] dimensions;
     public List<string> grid;
     public List<string> enemies;
