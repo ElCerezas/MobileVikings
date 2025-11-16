@@ -5,6 +5,7 @@ using UnityEngine;
 public class LevelLoader : MonoBehaviour
 {
     [SerializeField] TileGrid tileGrid;
+    [SerializeField] Quaternion rotation;
 
     [Header("Dictionaries")]
     public SerializedDictionary<string, GameObject> terrainDictionary;
@@ -34,9 +35,9 @@ public class LevelLoader : MonoBehaviour
                 string slotKey = row[x].ToString();
                 if (terrainDictionary.ContainsKey(slotKey))
                 {
-                    Vector3 pos = new Vector3(x, 0, -y);
-                    Debug.Log($"{x},{y}: {slotKey} -> {terrainDictionary[slotKey].name}");
-                    Instantiate(terrainDictionary[slotKey], pos, Quaternion.identity, tileGrid.transform);
+                    Vector3 pos = new Vector3(x, 0, -y - 1);
+                    GameObject i = Instantiate(terrainDictionary[slotKey], pos, rotation, tileGrid.transform);
+                    i.transform.localPosition = pos;
                 }
                 else
                 {
