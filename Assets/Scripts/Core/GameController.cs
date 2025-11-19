@@ -6,9 +6,10 @@ public enum LevelPhase { Generate, SelectClass, SelectSubClass, PlaceHeroes, Com
 public class GameController : MonoBehaviour
 {
     public static GameController Instance;
-
+    PlayerData pd;
 
     public LevelLoader levelLoader;
+    public SelectionPhaseManager selectionManager;
     //public PlacementPhaseManager placementManager;
     //public CombatManager combatManager;
     //public TickManager tickManager;
@@ -17,12 +18,13 @@ public class GameController : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        pd = PlayerData.instance;
     }
     private void Update()
     {
         if(Input.GetKeyUp(KeyCode.Alpha1))
         {
-            StartLevel(1);
+            StartLevel(pd.GetLevel());
         }
     }
     public void StartLevel(int id)
@@ -41,11 +43,20 @@ public class GameController : MonoBehaviour
         levelLoader.GenerateLevel(data);
         //BeginHeroSelection(data);
     }
+    public HeroData[] GetBaseDeck()
+    {
+        return pd.deck;
+    }
+
     #region PhasesTriggers
     public void ChangePhase(LevelPhase newPhase)
     {
         CurrentPhase = newPhase;
         Debug.Log($"Phase changed to: {newPhase}");
+        if( CurrentPhase == LevelPhase.SelectClass)
+        {
+            selectionManager.StartClassSelection();
+        }
     }
     /*
     private void BeginHeroSelection(LevelData data)

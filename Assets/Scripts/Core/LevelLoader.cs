@@ -77,6 +77,7 @@ public class LevelLoader : MonoBehaviour
                 }
             }
         }
+        GameController.Instance.ChangePhase(LevelPhase.SelectClass);
     }
     private string FixJsonArray(string rawJson)
     {

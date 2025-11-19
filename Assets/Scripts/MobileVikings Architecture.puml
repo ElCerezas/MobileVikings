@@ -1,0 +1,227 @@
+@startuml
+'skinparam classAttributeIconSize 0
+class PlayerData{
+    +PlayerData instance
+    +HeroData[] deck
+    +int Level
+}
+
+class GameController 
+{
+  +static GameController instance
+  +LevelLoader levelLoader
+  +PlayerData pd
+  
+  +StartLevel(int id)
+  +GetBaseDeck(HeroData[] deck)
+  +ChangePhase(LevelPhase p)
+}
+enum LevelPhase {
+    Generate
+    SelectClass
+    SelectSubClass
+    PlaceHeroes
+    Combat
+    EndLevel
+}
+class LevelLoader {
+    -TileGrid tileGrid
+    ~Quaternion rotation
+    +Dictionary<string, GameObject> terrainDictionary
+    +Dictionary<string, GameObject> enemiesDictionary
+    +LoadLevelFromResources(string levelPath, int id): LevelData
+    +GenerateLevel(LevelData data)
+    +FixJsonArray(string rawJson):string
+}
+class LevelData {
+    +int ID
+    +int playerSpawnRows
+    +int selectableHeroes
+    +float placingTime
+    +int[] dimensions
+    +List<string> grid
+    +List<string> enemies
+}
+
+' =============================
+
+class TileGrid {
+    +List<Entity> enemies
+    +List<Entity> heroes
+    -Tile[,] tiles
+    -Vector2Int dimensions
+    
+    +Initialize(int w,int h)
+    +SetTile(int x, int y, Tile t)
+    +GetTile(int x,int y): Tile
+    +WorldToTile(Vector3 pos)
+}
+
+class Tile {
+    +int x
+    +int y
+    +GameObject groundPoint
+    -bool walkable
+    +Entity occupant
+    +List<Tile> neighbors
+    
+    +bool IsFree()
+    +Vector3 GetGroundPos()
+}
+
+' =============================
+class Card {
+  ~Button Button
+  ~Image cardImage
+  ~string name
+  -HeroData hero
+  -SubClass subclassA 
+  -SubClass subclassB
+  
+  +SetHeroToCard(HeroData)
+  -SetCardToSubclass(SubClass)
+  +OnCardPressed()
+}
+class HeroData << (S,#FFAA00) >> {
+    +string name
+    +SubClass subclassA
+    +SubClass subclassB
+}
+
+class SubClass << (S,#FFAA00) >> {
+    +string name
+    +EntityData subclassData
+}
+
+' =============================
+
+abstract class Entity {
+  +EntityData data
+  +Tile currentTile
+  +AIController aiController
+  +Initialize(EntityData data)
+  +OnTick(int tick)
+}
+
+class Hero
+class Enemy
+
+class EntityData << (S,#FFAA00) >> {
+  +string id
+  +GameObject prefab
+  +int baseHp
+  +int baseAtk
+  +AbilityData[] abilities
+
+}
+
+' ================================
+
+interface IAIState {
+  +void Execute(Entity self)
+}
+
+abstract class AIState << (S,#B3D9FF) >> {
+  +string stateName
+  +void Execute(Entity self)
+}
+
+class PatrolState
+class ChargeState
+class AttackState
+
+
+class AIController {
+  +AIState currentState
+  +AIState[] availableStates
+  +void Evaluate(Entity self)
+  +void SetState(AIState newState)
+}
+
+'=====================================
+
+class TickManager {
+    +float tickRate
+    +int CurrentTick
+    +event OnTick
+    +Start()
+    +Stop()
+}
+
+' =============================
+
+class PlacementPhaseManager {
+    +float placingTime
+    +List<SubClass> heroesToPlace
+    +BeginPlacement(float t)
+    +TryPlace(SubClass hero, Tile tile)
+}
+
+class SelectionPhaseManager {
+    +int cardsToSelect
+    +List<HeroData> selectedClasses
+    +SubClass[] subClases
+    
+    +AddClassToList(HeroData)
+    +RemoveClassToList()
+    +SelectSubclass(SubClass)
+    +EndedSubClassSelection()
+}
+
+class CombatManager {
+    +ResolveActions()
+    +QueueAction(Entity e, Action a)
+}
+' =============================
+PlayerData --> GameController 
+PlayerData ..> HeroData
+
+LevelPhase .> GameController
+GameController <. LevelData
+
+GameController --> LevelLoader
+GameController --> SelectionPhaseManager
+GameController --> PlacementPhaseManager
+GameController --> CombatManager
+
+LevelLoader .> SelectionPhaseManager
+SelectionPhaseManager .> PlacementPhaseManager
+PlacementPhaseManager .> CombatManager
+
+LevelLoader --> TileGrid
+LevelLoader --> Tile : instantiates
+SelectionPhaseManager --> Card
+PlacementPhaseManager --> TileGrid
+PlacementPhaseManager --> Hero
+CombatManager ---> TickManager
+
+SubClass ..> EntityData
+EntityData --> Enemy
+EntityData --> Hero
+
+TickManager --> Entity : calls OnTick()
+TickManager --> Tile : calls OnTick()
+
+TileGrid --> Tile : contains >
+
+HeroData }-- SubClass
+HeroData --> Card
+
+Hero }..{ Entity
+Enemy }..{ Entity
+
+Tile -> Entity : occupant
+Entity -> Tile : position
+
+AIController --> PatrolState
+AIController --> ChargeState
+AIController --> AttackState
+
+PatrolState --|> AIState
+ChargeState --|> AIState
+AttackState --|> AIState
+
+AIState <|.. IAIState
+Entity --> AIController : has
+
+@enduml
