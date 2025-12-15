@@ -1,16 +1,19 @@
 using UnityEngine;
 
-public class Unit : MonoBehaviour
+public abstract class Unit : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    [Header("Base")]
+    public string UnitId;
+    public bool isPlayer1;
+    [Range(0, 3)] public int tier = 1;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    [Header("Stats")]
+    [SerializeField] protected int maxHealth;
+    [SerializeField] protected int health;
+
+    [Header("BoardReference")]
+    public Tile currentTile;
+
+    [Header("Components")]
+    public Ability ability;
 }

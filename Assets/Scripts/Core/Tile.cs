@@ -2,15 +2,27 @@ using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    public Vector2Int gridPosition { get; private set; }
+    public Unit unitInTile { get; private set; }
 
-    // Update is called once per frame
-    void Update()
+    public void Init(Vector2Int gridPos)
     {
-        
+        gridPosition = gridPos;
+    }
+    public bool IsEmpty()
+    {
+        return unitInTile == null;
+    }
+    public void SetUnitInTile(Unit unit)
+    {
+        unitInTile = unit;
+        unit.currentTile = this;
+    }
+    public void ClearUnit()
+    {
+        if (unitInTile != null)
+            unitInTile.currentTile = null;
+
+        unitInTile = null;
     }
 }
