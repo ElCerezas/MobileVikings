@@ -5,16 +5,17 @@ using UnityEngine;
 
 public class LevelLoader : MonoBehaviour
 {
-    [SerializeField] TileGrid tileGrid;
+    [SerializeField] GridSystem tileGrid;
     [SerializeField] Quaternion rotation;
+    [SerializeField] string path;
 
     [Header("Dictionaries")]
     public SerializedDictionary<string, GameObject> terrainDictionary;
     public SerializedDictionary<string, GameObject> enemiesDictionary;
 
-    public LevelData LoadLevelFromResources(string levelsPath, int id)
+    public LevelData LoadLevelFromResources(int id)
     {
-        TextAsset jsonData = Resources.Load<TextAsset>(levelsPath);
+        TextAsset jsonData = Resources.Load<TextAsset>(path);
         if (jsonData == null)
         {
             Debug.LogError("No existeix JSON valid");
@@ -27,7 +28,7 @@ public class LevelLoader : MonoBehaviour
     public void GenerateLevel(LevelData level)
     {
         tileGrid.Initialize(level.dimensions[0], level.dimensions[1]);
-        tileGrid.SetGridPosition(level);
+        //Tiles
         for (int y = 0; y < level.dimensions[1]; y++)
         {
             string row = level.grid[y];
@@ -37,9 +38,7 @@ public class LevelLoader : MonoBehaviour
                 if (terrainDictionary.ContainsKey(slotKey))
                 {
                     Vector3 pos = new Vector3(x, 0, -y - 1);
-                    GameObject i = Instantiate(terrainDictionary[slotKey], pos, rotation, tileGrid.transform);
-                    i.transform.localPosition = pos;
-                    tileGrid.SetTile(x, y, i.GetComponent<Tile>());
+                    GameObject i = Instantiate(terrainDictionary[slotKey], pos, rotation);
                 }
                 else
                 {
@@ -48,7 +47,8 @@ public class LevelLoader : MonoBehaviour
             }
         }
 
-        for (int y = 0; y < level.dimensions[1]; y++)
+        //Entities
+        /*for (int y = 0; y < level.dimensions[1]; y++)
         {
             string row = level.enemies[y];
             for (int x = 0; x < level.dimensions[0]; x++)
@@ -57,8 +57,8 @@ public class LevelLoader : MonoBehaviour
                 if (enemiesDictionary.ContainsKey(enemyKey))
                 {
                     Tile tile = tileGrid.GetTile(x, y);
-                    GameObject i = Instantiate(enemiesDictionary[enemyKey], Vector3.zero, Quaternion.identity, tile.transform);
-                    i.transform.position = tile.GetGroundPos();
+                    GameObject i = Instantiate(enemiesDictionary[enemyKey], Vector3.zero, Quaternion.identity);
+                    i.transform.position = tile.gameObject.transform.position;
 
                     Entity entity = i.GetComponent<Entity>();
                     if (entity == null)
@@ -76,7 +76,7 @@ public class LevelLoader : MonoBehaviour
                     Debug.Log(enemyKey + "-> Not Found");
                 }
             }
-        }
+        }*/
     }
     private string FixJsonArray(string rawJson)
     {
