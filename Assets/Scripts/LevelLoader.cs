@@ -1,5 +1,4 @@
 using AYellowpaper.SerializedCollections;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -19,6 +18,7 @@ public class LevelLoader : MonoBehaviour
         if (jsonData == null)
         {
             Debug.LogError("No existeix JSON valid");
+            return null;
         }
 
         LevelList allLevels = JsonUtility.FromJson<LevelList>(FixJsonArray(jsonData.text));

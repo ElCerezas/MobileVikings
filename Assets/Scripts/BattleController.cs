@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class BattleController : MonoBehaviour
@@ -12,7 +13,10 @@ public class BattleController : MonoBehaviour
     [Header("LevelGeneration")]
     [SerializeField] int levelId = 1;
 
+    [Header("TurnManager")]
     bool playerTurn = true;
+    public delegate void PlacementEnded();
+
     public static int eventedUnits = 0;
     bool initialTurn = true;
     public static event Action<bool> OnPlacementStatue;
@@ -36,20 +40,100 @@ public class BattleController : MonoBehaviour
     {
         //SOLO LO HACEN LAS UNIDADES DEL JUGADOR QUE TOQUE
         //Manda el evento a todas las unidades OnBeforeMove y cuando hayan acabado todas manda el OnMove y luego el after move (en todos se espera a que todas las unidades se meuvan)
+
     }
     void MovePhase()
     {
-        //SOLO LO HACEN LAS UNIDADES DEL JUGADOR QUE TOQUE
-        //Manda el evento a todas las unidades OnBeforeMove y cuando hayan acabado todas manda el OnMove y luego el after move (en todos se espera a que todas las unidades se meuvan)
+        var activeUnits = GetActiveUnits();
 
+        ExecutePhase<IBeforeMove>(
+            activeUnits,
+            (u, cb) => u.BeforeMove(cb),
+            () =>
+            {
+                ExecutePhase<IMove>(
+                    activeUnits,
+                    (u, cb) => u.Move(cb),
+                    () =>
+                    {
+                        ExecutePhase<IAfterMove>(
+                            activeUnits,
+                            (u, cb) => u.AfterMove(cb),
+                            () =>
+                            {
+                                Debug.Log("MovePhase terminada");
+                                AtackPhase();
+                            });
+                    });
+            });
     }
     void AtackPhase()
     {
-        //SOLO LO HACEN LAS UNIDADES DEL JUGADOR QUE TOQUE
-        //Lo mismo que move phase pero con Attack
+        var activeUnits = GetActiveUnits();
+
+        ExecutePhase<IBeforeAttack>(
+            activeUnits,
+            (u, cb) => u.BeforeAttack(cb),
+            () =>
+            {
+                ExecutePhase<IAttack>(
+                    activeUnits,
+                    (u, cb) => u.Attack(cb),
+                    () =>
+                    {
+                        ExecutePhase<IAfterAttack>(
+                            activeUnits,
+                            (u, cb) => u.AfterAttack(cb),
+                            () =>
+                            {
+                                Debug.Log("AttackPhase terminada");
+                                EndTurn();
+                            });
+                    });
+            });
     }
     void PlaceFase()
     {
-        //Cambia de turno y empieza de nuevo
+        if (playerTurn)
+        {
+            //PlayerManager.Instance.OnPlacementPhase(() => { OnPlacementPhaseEnded();} );
+        }
+        else
+        {
+            enemyModule.OnPlacementPhase(() => { OnPlacementPhaseEnded(); });
+        }
+    }
+    void OnPlacementPhaseEnded()
+    {
+        Debug.Log("Placement terminado");
+        playerTurn = !playerTurn;
+        StartTurn();
+    }
+
+    //Aixo esta chatgpeteat, IGNORAR, es provisional y no optim
+    void ExecutePhase<T>(List<Unit> units, Action<T, Action> executor, Action onPhaseFinished) where T : class
+    {
+        int pending = 0;
+
+        foreach (var unit in units)
+        {
+            if (unit is T phase)
+            {
+                pending++;
+                executor(phase, () =>
+                {
+                    pending--;
+                    if (pending == 0)
+                        onPhaseFinished?.Invoke();
+                });
+            }
+        }
+        if (pending == 0) onPhaseFinished?.Invoke();
+    }
+    List<Unit> GetActiveUnits()
+    {
+        UnitOwner owner = playerTurn ? UnitOwner.Player : UnitOwner.Enemy;
+
+        return FindObjectsOfType<Unit>().Where(u => u.owner == owner).ToList();
     }
 }

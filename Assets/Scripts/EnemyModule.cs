@@ -1,3 +1,5 @@
+using static BattleController;
+
 public abstract class EnemyModule
 {
     protected BattleController battle;
@@ -7,5 +9,5 @@ public abstract class EnemyModule
         battle = controller;
     }
 
-    public abstract void OnPlacementPhase();
+    public abstract void OnPlacementPhase(PlacementEnded onFinished); //onFinished?.Invoke(); Enviar aixo al final del placement
 }

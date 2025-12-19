@@ -255,6 +255,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 941301593}
+  - component: {fileID: 941301595}
+  - component: {fileID: 941301594}
   m_Layer: 0
   m_Name: BattleManager
   m_TagString: Untagged
@@ -269,6 +271,77 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 941301592}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 5.75395, y: 0, z: 12.74723}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &941301594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 941301592}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c951d1805775705478df908edc906f56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LevelLoader
+  rotation: {x: 0, y: 0, z: 0, w: 0}
+  path: Levels
+  terrainDictionary:
+    _serializedList:
+    - Key: P
+      Value: {fileID: 4020171833401176880, guid: 4ca0b079ed0215846a6d91e3e0a6b981, type: 3}
+    - Key: M
+      Value: {fileID: 4406801704509011277, guid: 7e0e5663495f9f34fb217b85bd41f4dc, type: 3}
+    - Key: L
+      Value: {fileID: 2246609663360960035, guid: 41a8e60a71deccc45a516a3bf3de110a, type: 3}
+    - Key: A
+      Value: {fileID: 8542969663264779898, guid: 33905bd0aa4063b43a606f04b8914041, type: 3}
+  enemiesDictionary:
+    _serializedList: []
+--- !u!114 &941301595
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 941301592}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e17ef8c10466049b27e6d3f1f10ecf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BattleController
+  levelLoader: {fileID: 941301594}
+  levelId: 1
+--- !u!1 &1722583514
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1722583515}
+  m_Layer: 0
+  m_Name: Grid
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1722583515
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1722583514}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 5.75395, y: 0, z: 12.74723}
@@ -376,3 +449,4 @@ SceneRoots:
   - {fileID: 2072992750}
   - {fileID: 669140921}
   - {fileID: 941301593}
+  - {fileID: 1722583515}
