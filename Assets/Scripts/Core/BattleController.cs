@@ -17,6 +17,9 @@ public class BattleController : MonoBehaviour
     bool playerTurn = true;
     public delegate void PlacementEnded();
 
+    [SerializeField]List<Unit> ActivePlayerUnits;
+    [SerializeField]List<Unit> ActiveEnemyUnits;
+
     public static int eventedUnits = 0;
     bool initialTurn = true;
     public static event Action<bool> OnPlacementStatue;
@@ -40,57 +43,35 @@ public class BattleController : MonoBehaviour
     {
         //SOLO LO HACEN LAS UNIDADES DEL JUGADOR QUE TOQUE
         //Manda el evento a todas las unidades OnBeforeMove y cuando hayan acabado todas manda el OnMove y luego el after move (en todos se espera a que todas las unidades se meuvan)
-
+        MovePhase();
     }
     void MovePhase()
     {
-        var activeUnits = GetActiveUnits();
-
-        ExecutePhase<IBeforeMove>(
-            activeUnits,
-            (u, cb) => u.BeforeMove(cb),
-            () =>
-            {
-                ExecutePhase<IMove>(
-                    activeUnits,
-                    (u, cb) => u.Move(cb),
-                    () =>
+        List<Unit> activeUnits = playerTurn ? ActivePlayerUnits : ActiveEnemyUnits;
+        ExecutePhase<IBeforeMove>(activeUnits, (u, cb) => u.BeforeMove(cb), () => {
+            ExecutePhase<IMove>( activeUnits, (u, cb) => u.Move(cb), () => {
+                ExecutePhase<IAfterMove> (activeUnits, (u, cb) => u.AfterMove(cb), () =>
                     {
-                        ExecutePhase<IAfterMove>(
-                            activeUnits,
-                            (u, cb) => u.AfterMove(cb),
-                            () =>
-                            {
-                                Debug.Log("MovePhase terminada");
-                                AtackPhase();
-                            });
-                    });
+                        Debug.Log("MovePhase terminada");
+                        AtackPhase();
+                    }
+                );
             });
+        });
     }
     void AtackPhase()
     {
-        var activeUnits = GetActiveUnits();
-
-        ExecutePhase<IBeforeAttack>(
-            activeUnits,
-            (u, cb) => u.BeforeAttack(cb),
-            () =>
-            {
-                ExecutePhase<IAttack>(
-                    activeUnits,
-                    (u, cb) => u.Attack(cb),
-                    () =>
-                    {
-                        ExecutePhase<IAfterAttack>(
-                            activeUnits,
-                            (u, cb) => u.AfterAttack(cb),
-                            () =>
-                            {
-                                Debug.Log("AttackPhase terminada");
-                                EndTurn();
-                            });
-                    });
+        List<Unit> activeUnits = playerTurn ? ActivePlayerUnits : ActiveEnemyUnits;
+        ExecutePhase<IBeforeAttack>(activeUnits, (u, cb) => u.BeforeAttack(cb), () => {
+            ExecutePhase<IAttack>(activeUnits, (u, cb) => u.Attack(cb), () => {
+                ExecutePhase<IAfterAttack>(activeUnits, (u, cb) => u.AfterAttack(cb), () =>
+                {
+                    Debug.Log("AttackPhase terminada");
+                    PlaceFase();
+                }
+                );
             });
+        });
     }
     void PlaceFase()
     {
@@ -110,30 +91,19 @@ public class BattleController : MonoBehaviour
         StartTurn();
     }
 
-    //Aixo esta chatgpeteat, IGNORAR, es provisional y no optim
-    void ExecutePhase<T>(List<Unit> units, Action<T, Action> executor, Action onPhaseFinished) where T : class
+    //Aixo crec q està be
+    void ExecutePhase<T>(List<Unit> units, Action<T, Action> accion, Action onPhaseFinished) where T : class
     {
         int pending = 0;
 
-        foreach (var unit in units)
+        for (int i = 0; i < units.Count; i++) 
         {
-            if (unit is T phase)
+            if (units[i] is T phase)
             {
                 pending++;
-                executor(phase, () =>
-                {
-                    pending--;
-                    if (pending == 0)
-                        onPhaseFinished?.Invoke();
-                });
+                accion(phase, () => { pending--; if (pending == 0) onPhaseFinished?.Invoke(); });
             }
         }
         if (pending == 0) onPhaseFinished?.Invoke();
-    }
-    List<Unit> GetActiveUnits()
-    {
-        UnitOwner owner = playerTurn ? UnitOwner.Player : UnitOwner.Enemy;
-
-        return FindObjectsOfType<Unit>().Where(u => u.owner == owner).ToList();
     }
 }
