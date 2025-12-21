@@ -12,10 +12,10 @@ public abstract class Hero : Unit, IMove, IAttack
     public virtual void Move(Action onFinished)
     {
         //CodiPerMoure
-        Debug.Log($"Mogut a [{mPattern.Move(currentTile, 1, owner).x} , {mPattern.Move(currentTile, 1, owner).y}]");
+        //Debug.Log($"Mogut a [{mPattern.Move(currentTile, 1, owner).x} , {mPattern.Move(currentTile, 1, owner).y}]");
     }
     public virtual void Attack(Action onFinished)
     {
-        Debug.Log($"Atacat a [{mPattern.Move(currentTile, 1, owner).x} , {mPattern.Move(currentTile, 1, owner).y}]");
+       // Debug.Log($"Atacat a [{mPattern.Move(currentTile, 1, owner).x} , {mPattern.Move(currentTile, 1, owner).y}]");
     }
 }
