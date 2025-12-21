@@ -1,18 +1,27 @@
-public class GridSystem
+using UnityEngine;
+
+public class GridSystem : MonoBehaviour
 {
+    public static GridSystem Instance { get; private set; }
+
     private Tile[,] tiles;
     public int Width { get; private set; }
     public int Height { get; private set; }
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+      
+    }
 
     public void Initialize(int w, int h)
     {
         Width = w;
         Height = h;
         tiles = new Tile[w, h];
-        /*
-        for (int x = 0; x < w; x++)
-            for (int y = 0; y < h; y++)
-                cells[x, y] = new Tile { x = x, y = y, owner = GridOwner.Neutral };*/
     }
 
     public Tile GetTile(int x, int y)
@@ -22,4 +31,12 @@ public class GridSystem
         return tiles[x, y];
     }
 
+    
+    public void RegisterTile(Tile tile)
+    {
+        if (tile.x >= 0 && tile.x < Width && tile.y >= 0 && tile.y < Height)
+        {
+            tiles[tile.x, tile.y] = tile;
+        }
+    }
 }
