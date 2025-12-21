@@ -99,7 +99,7 @@ public class Especial1ForwardMovement : MovementPattern
         return targetTiles.ToArray();
     }
 }
-
+//gg deepseek
 public class CavalloForwardMovement : MovementPattern
 {
     public override Tile[] Move(Tile actualTile, int moveTiles, UnitOwner owner)
