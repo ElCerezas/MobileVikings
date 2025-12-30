@@ -14,7 +14,7 @@ public class LevelLoader : MonoBehaviour
 
     public LevelData LoadLevelFromResources(int id)
     {
-        tileGrid = GetComponent<GridSystem>();
+        //tileGrid = GetComponent<GridSystem>();
         TextAsset jsonData = Resources.Load<TextAsset>(path);
         if (jsonData == null)
         {

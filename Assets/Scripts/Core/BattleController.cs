@@ -29,7 +29,6 @@ public class BattleController : MonoBehaviour
     {
         levelLoader.GenerateLevel(levelLoader.LoadLevelFromResources(levelId));
         playerTurn = CoinFlip();
-
     }
     bool CoinFlip()
     {
