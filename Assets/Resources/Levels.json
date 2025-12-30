@@ -1,6 +1,23 @@
 {
   "levels": [
     {
+      "ID": 0,
+      "playerSpawnRows": 3,
+      "dimensions": [5,9],
+      "grid":
+      [
+        "AAAAA",
+        "AAAAA",
+        "AAAAA",
+        "AAAAA",
+        "AAAAA",
+        "AAAAA",
+        "AAAAA",
+        "AAAAA",
+        "AAAAA"
+      ]
+    },
+    {
       "ID": 1,
       "playerSpawnRows": 1,
       "dimensions": [3,3],
