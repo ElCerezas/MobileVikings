@@ -5,16 +5,18 @@ using UnityEngine;
 public class LevelLoader : MonoBehaviour
 {
     [SerializeField] GridSystem tileGrid;
-    [SerializeField] Quaternion rotation;
     [SerializeField] string path;
 
     [Header("Dictionaries")]
-    public SerializedDictionary<string, GameObject> terrainDictionary;
+    public SerializedDictionary<string, Vector2Int> terrainDictionary;
     public SerializedDictionary<string, GameObject> enemiesDictionary;
+
+    [Header("Tiles")]
+    [SerializeField] GameObject tilePrefab;
+    [SerializeField] Vector2Int atlasSize;
 
     public LevelData LoadLevelFromResources(int id)
     {
-        //tileGrid = GetComponent<GridSystem>();
         TextAsset jsonData = Resources.Load<TextAsset>(path);
         if (jsonData == null)
         {
@@ -29,22 +31,34 @@ public class LevelLoader : MonoBehaviour
     public void GenerateLevel(LevelData level)
     {
         tileGrid.Initialize(level.dimensions[0], level.dimensions[1]);
-        //Tiles
+        Vector2 tileScale = new Vector2(1f / atlasSize.x, 1f / atlasSize.y);
+
         for (int y = 0; y < level.dimensions[1]; y++)
         {
             string row = level.grid[y];
+
             for (int x = 0; x < level.dimensions[0]; x++)
             {
                 string slotKey = row[x].ToString();
-                if (terrainDictionary.ContainsKey(slotKey))
-                {
-                    Vector3 pos = new Vector3(x, 0, -y - 1);
-                    GameObject i = Instantiate(terrainDictionary[slotKey], pos, rotation);
-                }
-                else
+
+                if (!terrainDictionary.ContainsKey(slotKey))
                 {
                     Debug.Log($"Key no trobada -> {slotKey}");
+                    continue;
                 }
+
+                Vector3 pos = new Vector3(x, 0, -y - 1);
+                GameObject tile = Instantiate(tilePrefab, pos, Quaternion.identity);
+
+                Renderer renderer = tile.GetComponent<Renderer>();
+                Material mat = renderer.material;
+
+                Vector2Int coord = terrainDictionary[slotKey];
+
+                Vector2 offset = new Vector2(coord.x * tileScale.x,coord.y * tileScale.y);
+
+                mat.mainTextureScale = tileScale;
+                mat.mainTextureOffset = offset;
             }
         }
 

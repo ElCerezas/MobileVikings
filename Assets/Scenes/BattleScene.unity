@@ -296,16 +296,16 @@ MonoBehaviour:
   path: Levels
   terrainDictionary:
     _serializedList:
-    - Key: P
-      Value: {fileID: 2707015760063195899, guid: 4ca1d40f5d57e8e46967ebb4c17340a9, type: 3}
-    - Key: M
-      Value: {fileID: 2707015760063195899, guid: 4ca1d40f5d57e8e46967ebb4c17340a9, type: 3}
-    - Key: L
-      Value: {fileID: 2707015760063195899, guid: 4ca1d40f5d57e8e46967ebb4c17340a9, type: 3}
     - Key: A
-      Value: {fileID: 2707015760063195899, guid: 4ca1d40f5d57e8e46967ebb4c17340a9, type: 3}
+      Value: {x: 0, y: 0}
+    - Key: B
+      Value: {x: 1, y: 0}
+    - Key: C
+      Value: {x: 2, y: 0}
   enemiesDictionary:
     _serializedList: []
+  tilePrefab: {fileID: 4620955632587718321, guid: 09b4c74e28ce71a49a08a3aeb9f1d909, type: 3}
+  atlasSize: {x: 8, y: 8}
 --- !u!114 &941301595
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -320,7 +320,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BattleController
   gridSystem: {fileID: 1722583516}
   levelLoader: {fileID: 941301594}
-  levelId: 1
+  levelId: 0
   ActivePlayerUnits: []
   ActiveEnemyUnits: []
 --- !u!1 &1722583514

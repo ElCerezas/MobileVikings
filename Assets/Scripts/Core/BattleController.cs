@@ -27,8 +27,17 @@ public class BattleController : MonoBehaviour
 
     private void Start()
     {
+        Debug.LogWarning("0.Start");
         levelLoader.GenerateLevel(levelLoader.LoadLevelFromResources(levelId));
         playerTurn = CoinFlip();
+    }
+    private void Update()
+    {
+        if (Input.GetKey(KeyCode.P))
+        {
+            Debug.Log("action");
+            StartTurn();
+        }
     }
     bool CoinFlip()
     {
@@ -40,12 +49,12 @@ public class BattleController : MonoBehaviour
     }
     void StartTurn()
     {
-        //SOLO LO HACEN LAS UNIDADES DEL JUGADOR QUE TOQUE
-        //Manda el evento a todas las unidades OnBeforeMove y cuando hayan acabado todas manda el OnMove y luego el after move (en todos se espera a que todas las unidades se meuvan)
+        Debug.LogWarning("TURN STARTED");
         MovePhase();
     }
     void MovePhase()
     {
+        Debug.LogWarning("1.Move phase");
         List<Unit> activeUnits = playerTurn ? ActivePlayerUnits : ActiveEnemyUnits;
         ExecutePhase<IBeforeMove>(activeUnits, (u, cb) => u.BeforeMove(cb), () => {
             ExecutePhase<IMove>( activeUnits, (u, cb) => u.Move(cb), () => {
@@ -60,6 +69,7 @@ public class BattleController : MonoBehaviour
     }
     void AtackPhase()
     {
+        Debug.LogWarning("2.Attack phase");
         List<Unit> activeUnits = playerTurn ? ActivePlayerUnits : ActiveEnemyUnits;
         ExecutePhase<IBeforeAttack>(activeUnits, (u, cb) => u.BeforeAttack(cb), () => {
             ExecutePhase<IAttack>(activeUnits, (u, cb) => u.Attack(cb), () => {
@@ -74,23 +84,23 @@ public class BattleController : MonoBehaviour
     }
     void PlaceFase()
     {
-        if (playerTurn)
+        Debug.LogWarning("3.Placement started");
+        /*if (playerTurn)
         {
             //PlayerManager.Instance.OnPlacementPhase(() => { OnPlacementPhaseEnded();} );
         }
         else
         {
             enemyModule.OnPlacementPhase(() => { OnPlacementPhaseEnded(); });
-        }
+        }*/
+        OnPlacementPhaseEnded();
     }
     void OnPlacementPhaseEnded()
     {
         Debug.Log("Placement terminado");
         playerTurn = !playerTurn;
-        StartTurn();
+        //StartTurn();
     }
-
-    //Aixo crec q està be
     void ExecutePhase<T>(List<Unit> units, Action<T, Action> accion, Action onPhaseFinished) where T : class
     {
         int pending = 0;
