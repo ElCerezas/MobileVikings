@@ -3,6 +3,7 @@ using System.Collections.Generic;
 // ====================================================
 // MOVIMIENTO ALANTE 
 // ====================================================
+[System.Serializable]
 public class ForwardMovement : MovementPattern
 {
     public override Tile[] Move(Tile actualTile, int moveTiles, UnitOwner owner)
@@ -26,6 +27,7 @@ public class ForwardMovement : MovementPattern
 // ====================================================
 // MOVIMIENTO EN DIAGONAL 
 // ====================================================
+[System.Serializable]
 public class DiagonalRightForwardMovement : MovementPattern
 {
     public override Tile[] Move(Tile actualTile, int moveTiles, UnitOwner owner)
@@ -47,6 +49,7 @@ public class DiagonalRightForwardMovement : MovementPattern
     }
 }
 
+[System.Serializable]
 public class DiagonalLeftForwardMovement : MovementPattern
 {
     public override Tile[] Move(Tile actualTile, int moveTiles, UnitOwner owner)
@@ -69,6 +72,7 @@ public class DiagonalLeftForwardMovement : MovementPattern
 // ====================================================
 //Las fumadas de alex 
 // ====================================================
+[System.Serializable]
 public class Especial1ForwardMovement : MovementPattern
 {
     public override Tile[] Move(Tile actualTile, int moveTiles, UnitOwner owner)
@@ -100,6 +104,7 @@ public class Especial1ForwardMovement : MovementPattern
     }
 }
 //gg deepseek
+[System.Serializable]
 public class CavalloForwardMovement : MovementPattern
 {
     public override Tile[] Move(Tile actualTile, int moveTiles, UnitOwner owner)

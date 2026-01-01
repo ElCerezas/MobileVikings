@@ -1,14 +1,17 @@
+using SerializeReferenceEditor;
 using System;
 using UnityEngine;
-
 public abstract class Hero : Unit, IMove, IAttack
 {
-    [Header("Base Components")]
+    [Header("Stats")]
+    [SerializeField] protected int damage;
+
+    [Header("Patterns")]
     [SerializeField] protected int movementRange = 1;
-    [SerializeField] protected MovementPattern mPattern;
+    [SerializeReference, SR] protected MovementPattern mPattern = null;
     [SerializeField] protected int attackRange = 1;
-    [SerializeField] protected AttackPattern aPattern;
-    
+    [SerializeReference, SR] protected AttackPattern aPattern = null;
+
     public virtual void Move(Action onFinished)
     {
         //CodiPerMoure

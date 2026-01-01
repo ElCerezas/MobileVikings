@@ -1,9 +1,4 @@
-using UnityEngine;
-// ====================================================
-// ATAKE ALANTE 
-// ====================================================
-
-
+[System.Serializable]
 public class ForwardAttack : AttackPattern
 {
     public override Tile[] Attack(Tile actualTile, int attackRange, UnitOwner owner)
