@@ -400,9 +400,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Warrior
   tier: 1
-  maxLife: 0
-  life: 0
-  damage: 0
+  maxLife: 100
+  life: 100
+  damage: 35
   piercingAttack: 0
   affectsAllies: 0
   affectsEnemies: 1
@@ -412,6 +412,8 @@ MonoBehaviour:
   attackRange: 1
   aPattern:
     rid: 973408693890842714
+  abilityModifiers: 050000000a0000000f000000
+  enemyKilled: 0
   references:
     version: 2
     RefIds:

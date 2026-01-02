@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 public enum UnitOwner {Player, Enemy}
 public abstract class Unit : MonoBehaviour
@@ -7,14 +8,16 @@ public abstract class Unit : MonoBehaviour
 
     [Header("Stats")]
     [SerializeField] [Range(1,3)] protected int tier = 1;
-    [SerializeField] protected int maxLife;
-    [SerializeField] protected int life;
+    [SerializeField] protected int[] abilityModifiers = new int[3];
+    [SerializeField][Min(1)] protected int maxLife;
+    [SerializeField][Min(0)] protected int life;
     public UnitOwner GetOwner()
     {
         return owner;
     }
     public virtual void Placement(Tile t)
     {
+        life = maxLife;
         //TODO
     }
     public virtual void ReceiveDamage(int amount)

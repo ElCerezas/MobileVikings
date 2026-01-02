@@ -11,10 +11,11 @@ public abstract class Hero : Unit, IMove, IAttack
     [SerializeField] protected bool affectsEnemies = true;
 
     [Header("Patterns")]
-    [SerializeField] protected int movementRange = 1;
+    [SerializeField][Min(1)] protected int movementRange = 1;
     [SerializeReference, SR] protected MovementPattern mPattern = null;
     [SerializeField] protected int attackRange = 1;
     [SerializeReference, SR] protected AttackPattern aPattern = null;
+    
 
     public virtual void Move(Action onFinished)
     {

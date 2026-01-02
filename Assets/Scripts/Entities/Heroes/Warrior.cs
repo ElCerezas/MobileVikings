@@ -3,9 +3,7 @@ using UnityEngine;
 
 public class Warrior : Hero, IAfterAttack
 {
-    [Header("Ability Mods")]
     [SerializeField] bool enemyKilled;
-    [SerializeField] int[] abilityModifiers;
 
     public void AfterAttack(Action onFinished)
     {
