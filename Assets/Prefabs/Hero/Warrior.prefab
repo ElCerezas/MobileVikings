@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2850440307494705661}
   - component: {fileID: 3679835292450650632}
   - component: {fileID: 9208339006683568956}
+  - component: {fileID: 6036156260006942949}
   m_Layer: 0
   m_Name: Warrior
   m_TagString: Untagged
@@ -89,3 +90,39 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &6036156260006942949
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6242844748612247864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c99d5a4c06992f4e8b6f7b695937550, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Warrior
+  tier: 1
+  abilityModifiers: 050000000a0000000f000000
+  maxLife: 100
+  life: 100
+  damage: 35
+  piercingAttack: 0
+  affectsAllies: 0
+  affectsEnemies: 1
+  movementRange: 1
+  mPattern:
+    rid: 973408693890842713
+  attackRange: 1
+  aPattern:
+    rid: 973408693890842714
+  enemyKilled: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 973408693890842713
+      type: {class: ForwardMovement, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 973408693890842714
+      type: {class: ForwardAttack, ns: , asm: Assembly-CSharp}
+      data: 

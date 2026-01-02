@@ -1,12 +1,12 @@
 using UnityEngine;
-
+public enum TileOwner {Player, Enemy, Neutral}
 public class Tile : MonoBehaviour
 {
     public int x;
     public int y;
 
     public Unit occupant;
-    //public GridOwner owner;
+    public TileOwner owner { get; private set; }
 
     public bool IsFree = true;
 

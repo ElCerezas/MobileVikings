@@ -15,10 +15,16 @@ public abstract class Hero : Unit, IMove, IAttack
     [SerializeReference, SR] protected MovementPattern mPattern = null;
     [SerializeField] protected int attackRange = 1;
     [SerializeReference, SR] protected AttackPattern aPattern = null;
-    
+
+    [Header("Flags")]
+    [SerializeField] bool enemyKilled;
+    [SerializeField] bool moved;
+    [SerializeField] bool attacked;
+
 
     public virtual void Move(Action onFinished)
     {
+        moved = false;
         if (mPattern == null || currentTile == null)
         {
             onFinished?.Invoke();
@@ -47,11 +53,14 @@ public abstract class Hero : Unit, IMove, IAttack
         currentTile.EmptyTile();
         destination.SetNewOccupant(this);
         currentTile = destination;
+        moved = true;
 
         StartCoroutine(MoveCoroutine(destination.transform.position, onFinished));
     }
     public virtual void Attack(Action onFinished)
     {
+        attacked = false;
+        enemyKilled = false;
         if (aPattern == null || currentTile == null)
         {
             onFinished?.Invoke();
@@ -79,8 +88,13 @@ public abstract class Hero : Unit, IMove, IAttack
 
             // Apply damage
             target.ReceiveDamage(damage);
+            attacked = true;
+            if (target.IsDead())
+            {
+                enemyKilled = true;
+            }
 
-            if (!piercingAttack)break;
+            if (!piercingAttack) break;
         }
 
         onFinished?.Invoke();
