@@ -17,9 +17,9 @@ public abstract class Hero : Unit, IMove, IAttack
     [SerializeReference, SR] protected AttackPattern aPattern = null;
 
     [Header("Flags")]
-    [SerializeField] bool enemyKilled;
-    [SerializeField] bool moved;
-    [SerializeField] bool attacked;
+    [SerializeField] protected bool enemyKilled;
+    [SerializeField] protected bool moved;
+    [SerializeField] protected bool attacked;
 
 
     public virtual void Move(Action onFinished)
@@ -99,7 +99,7 @@ public abstract class Hero : Unit, IMove, IAttack
 
         onFinished?.Invoke();
     }
-    private IEnumerator MoveCoroutine(Vector3 targetPosition, Action onFinished)
+    protected IEnumerator MoveCoroutine(Vector3 targetPosition, Action onFinished)
     {
         float speed = 5f;
 

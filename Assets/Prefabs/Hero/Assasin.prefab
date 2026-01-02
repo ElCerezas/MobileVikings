@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8313346277551735098}
   - component: {fileID: 3727111622466421077}
   - component: {fileID: 220197043924782337}
+  - component: {fileID: 500027928105952532}
   m_Layer: 0
   m_Name: Assasin
   m_TagString: Untagged
@@ -89,3 +90,41 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &500027928105952532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2879367810114906533}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0db0d1a63b2f0742b95e36f4fa8e0bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assasin
+  tier: 1
+  abilityModifiers: 020000000100000000000000
+  maxLife: 70
+  life: 70
+  damage: 25
+  piercingAttack: 0
+  affectsAllies: 0
+  affectsEnemies: 1
+  movementRange: 1
+  mPattern:
+    rid: 973408699786723397
+  attackRange: 1
+  aPattern:
+    rid: 973408699786723398
+  enemyKilled: 0
+  moved: 0
+  attacked: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 973408699786723397
+      type: {class: ForwardMovement, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 973408699786723398
+      type: {class: ForwardAttack, ns: , asm: Assembly-CSharp}
+      data: 

@@ -3,8 +3,6 @@ using UnityEngine;
 
 public class Warrior : Hero, IAfterAttack
 {
-    
-
     public void AfterAttack(Action onFinished)
     {
         if (enemyKilled)
