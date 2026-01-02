@@ -22,4 +22,8 @@ public abstract class Unit : MonoBehaviour
         life -= amount;
         life = Mathf.Max(life, 0);
     }
+    public virtual bool IsDead()
+    {
+        return life <= 0;
+    }
 }
