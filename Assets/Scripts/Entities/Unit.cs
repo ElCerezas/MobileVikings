@@ -9,9 +9,17 @@ public abstract class Unit : MonoBehaviour
     [SerializeField] [Range(1,3)] protected int tier = 1;
     [SerializeField] protected int maxLife;
     [SerializeField] protected int life;
-
+    public UnitOwner GetOwner()
+    {
+        return owner;
+    }
     public virtual void Placement(Tile t)
     {
         //TODO
+    }
+    public virtual void ReceiveDamage(int amount)
+    {
+        life -= amount;
+        life = Mathf.Max(life, 0);
     }
 }

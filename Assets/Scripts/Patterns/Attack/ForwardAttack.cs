@@ -1,7 +1,7 @@
 [System.Serializable]
 public class ForwardAttack : AttackPattern
 {
-    public override Tile[] Attack(Tile actualTile, int attackRange, UnitOwner owner)
+    public override Tile[] Attack(Tile actualTile, int attackRange, UnitOwner owner, bool piercing, bool affectsEnemies, bool affectsAlies)
     {
         int currentX = actualTile.x;
         int currentY = actualTile.y;

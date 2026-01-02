@@ -24,4 +24,8 @@ public class Tile : MonoBehaviour
         occupant = null;
         IsFree = true;
     }
+    public UnitOwner GetOccupantSide()
+    {
+        return occupant.GetOwner();
+    }
 }

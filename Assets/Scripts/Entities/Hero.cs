@@ -6,6 +6,9 @@ public abstract class Hero : Unit, IMove, IAttack
 {
     [Header("Stats")]
     [SerializeField] protected int damage;
+    [SerializeField] protected bool piercingAttack = false;
+    [SerializeField] protected bool affectsAllies = false;
+    [SerializeField] protected bool affectsEnemies = true;
 
     [Header("Patterns")]
     [SerializeField] protected int movementRange = 1;
@@ -48,6 +51,38 @@ public abstract class Hero : Unit, IMove, IAttack
     }
     public virtual void Attack(Action onFinished)
     {
+        if (aPattern == null || currentTile == null)
+        {
+            onFinished?.Invoke();
+            return;
+        }
+        Tile[] tiles = aPattern.Attack(currentTile, attackRange, owner, piercingAttack, affectsEnemies, affectsAllies);
+
+        if (tiles == null || tiles.Length == 0)
+        {
+            onFinished?.Invoke();
+            return;
+        }
+
+        foreach (Tile tile in tiles)
+        {
+            if (tile.IsFree) continue;
+
+            Unit target = tile.occupant;
+            if (target == null) continue;
+
+            bool isEnemy = target.GetOwner() != owner;
+
+            if (isEnemy && !affectsEnemies) continue;
+            if (!isEnemy && !affectsAllies) continue;
+
+            // Apply damage
+            target.ReceiveDamage(damage);
+
+            if (!piercingAttack)break;
+        }
+
+        onFinished?.Invoke();
     }
     private IEnumerator MoveCoroutine(Vector3 targetPosition, Action onFinished)
     {

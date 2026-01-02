@@ -403,19 +403,22 @@ MonoBehaviour:
   maxLife: 0
   life: 0
   damage: 0
+  piercingAttack: 0
+  affectsAllies: 0
+  affectsEnemies: 1
   movementRange: 1
   mPattern:
-    rid: 973408678227214636
+    rid: 973408693890842713
   attackRange: 1
   aPattern:
-    rid: 973408678227214637
+    rid: 973408693890842714
   references:
     version: 2
     RefIds:
-    - rid: 973408678227214636
+    - rid: 973408693890842713
       type: {class: ForwardMovement, ns: , asm: Assembly-CSharp}
       data: 
-    - rid: 973408678227214637
+    - rid: 973408693890842714
       type: {class: ForwardAttack, ns: , asm: Assembly-CSharp}
       data: 
 --- !u!1001 &1718755797

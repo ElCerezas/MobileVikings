@@ -50,7 +50,8 @@ public class BattleController : MonoBehaviour
     void StartTurn()
     {
         Debug.LogWarning("TURN STARTED");
-        MovePhase();
+        List<Unit> activeUnits = playerTurn ? ActivePlayerUnits : ActiveEnemyUnits;
+        ExecutePhase<IStartTurn>(activeUnits, (u, cb) => u.StartTurn(cb), () => { MovePhase(); });
     }
     void MovePhase()
     {
