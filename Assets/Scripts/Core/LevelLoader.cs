@@ -49,6 +49,8 @@ public class LevelLoader : MonoBehaviour
 
                 Vector3 pos = new Vector3(x, 0, -y - 1);
                 GameObject tile = Instantiate(tilePrefab, pos, Quaternion.identity);
+                Tile t = tile.GetComponent<Tile>();
+                t.SetTileCoords(x, y);
 
                 Renderer renderer = tile.GetComponent<Renderer>();
                 Material mat = renderer.material;
