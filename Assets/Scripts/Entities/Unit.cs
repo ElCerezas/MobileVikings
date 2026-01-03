@@ -5,6 +5,7 @@ public abstract class Unit : MonoBehaviour
 {
     protected UnitOwner owner;
     protected Tile currentTile;
+    [SerializeField] public bool isHero {get; protected set;}
 
     [Header("Stats")]
     [SerializeField] [Range(1,3)] protected int tier = 1;
@@ -24,6 +25,11 @@ public abstract class Unit : MonoBehaviour
     {
         life -= amount;
         life = Mathf.Max(life, 0);
+    }
+    public virtual void HealDamage(int amount)
+    {
+        life += amount;
+        life = Mathf.Min(life, maxLife);
     }
     public virtual bool IsDead()
     {
