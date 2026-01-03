@@ -1,9 +1,9 @@
 using System;
 using UnityEngine;
 
-public class Healer : Hero, IBeforeMove
+public class Healer : Hero, IBeforeAttack
 {
-    public void BeforeMove(Action onFinished)
+    public void BeforeAttack(Action onFinished)
     {
         Tile[] tiles = aPattern.Attack(currentTile, 1, owner, false, false, true);
 
