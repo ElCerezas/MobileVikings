@@ -1,6 +1,7 @@
+using UnityEngine;
 using static BattleController;
 
-public abstract class EnemyModule
+public abstract class EnemyModule : MonoBehaviour
 {
     protected BattleController battle;
 
@@ -9,5 +10,5 @@ public abstract class EnemyModule
         battle = controller;
     }
 
-    public abstract void OnPlacementPhase(PlacementEnded onFinished); //onFinished?.Invoke(); Enviar aixo al final del placement
+    public abstract void OnPlacementPhase(PlacementEnded onFinished);
 }

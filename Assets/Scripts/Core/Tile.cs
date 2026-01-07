@@ -4,9 +4,10 @@ public class Tile : MonoBehaviour
 {
     public int x;
     public int y;
+    public Transform spawnPoint;
 
     public Unit occupant;
-    public TileOwner owner { get; private set; }
+    public TileOwner owner;// { get; private set; }
 
     public bool IsFree = true;
 
@@ -28,4 +29,9 @@ public class Tile : MonoBehaviour
     {
         return occupant.GetOwner();
     }
+    public void SetOwner(TileOwner newOwner)
+    {
+        owner = newOwner;
+    }
+
 }

@@ -51,6 +51,7 @@ public class LevelLoader : MonoBehaviour
                 GameObject tile = Instantiate(tilePrefab, pos, Quaternion.identity);
                 Tile t = tile.GetComponent<Tile>();
                 t.SetTileCoords(x, y);
+                tileGrid.RegisterTile(t);
 
                 Renderer renderer = tile.GetComponent<Renderer>();
                 Material mat = renderer.material;
@@ -61,6 +62,13 @@ public class LevelLoader : MonoBehaviour
 
                 mat.mainTextureScale = tileScale;
                 mat.mainTextureOffset = offset;
+                int h = level.dimensions[1];
+                int spawn = level.playerSpawnRows;
+
+                if (y < spawn) t.SetOwner(TileOwner.Enemy);
+                else if (y >= h - spawn) t.SetOwner(TileOwner.Player);
+                else t.SetOwner(TileOwner.Neutral);
+
             }
         }
 

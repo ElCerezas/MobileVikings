@@ -7,8 +7,13 @@ public class BattleController : MonoBehaviour
 {
     [Header("CoreSystems")]
     [SerializeField] GridSystem gridSystem;
+    public GridSystem Grid => gridSystem;
     [SerializeField] LevelLoader levelLoader;
     [SerializeField] EnemyModule enemyModule;
+    [SerializeField] PlayerPlacementModule playerModule;
+    public int turnsToFinish = 5;
+    [SerializeField] private int currentTurn = 0;
+
 
     [Header("LevelGeneration")]
     [SerializeField] int levelId = 1;
@@ -16,12 +21,17 @@ public class BattleController : MonoBehaviour
     [Header("TurnManager")]
     bool playerTurn = true;
     public delegate void PlacementEnded();
+    bool playerActedThisRound;
+    bool enemyActedThisRound;
 
-    [SerializeField]List<Unit> ActivePlayerUnits;
-    [SerializeField]List<Unit> ActiveEnemyUnits;
+
+    [Header("Placement")]
+    [SerializeField] List<Unit> playerUnitsToPlace; 
+    [SerializeField] List<Unit> enemyUnitsToPlace;
+    [SerializeField] List<Unit> ActivePlayerUnits = new();
+    [SerializeField] List<Unit> ActiveEnemyUnits = new();
 
     public static int eventedUnits = 0;
-    bool initialTurn = true;
     public static event Action<bool> OnPlacementStatue;
     public static event Action<bool> OnTurnStarted;
 
@@ -29,8 +39,17 @@ public class BattleController : MonoBehaviour
     {
         Debug.LogWarning("0.Start");
         levelLoader.GenerateLevel(levelLoader.LoadLevelFromResources(levelId));
+        Debug.LogWarning("Level Loaded " + levelLoader);
         playerTurn = CoinFlip();
+        PlaceStatues();
+        playerModule.Initialize(this);
+        enemyModule.Initialize(this);
+        playerActedThisRound = false;
+        enemyActedThisRound = false;
+
+        StartTurn();
     }
+    
     private void Update()
     {
         if (Input.GetKey(KeyCode.P))
@@ -41,7 +60,7 @@ public class BattleController : MonoBehaviour
     }
     bool CoinFlip()
     {
-        return UnityEngine.Random.Range(0,1) == 0 ? false : true;
+        return UnityEngine.Random.Range(0, 2) == 0 ? false : true;
     }
     void PlaceStatues()
     {
@@ -49,19 +68,21 @@ public class BattleController : MonoBehaviour
     }
     void StartTurn()
     {
-        Debug.LogWarning("TURN STARTED");
+        Debug.LogWarning("TURN STARTED "  + playerTurn);
+        
         List<Unit> activeUnits = playerTurn ? ActivePlayerUnits : ActiveEnemyUnits;
         ExecutePhase<IStartTurn>(activeUnits, (u, cb) => u.StartTurn(cb), () => { MovePhase(); });
+        
     }
     void MovePhase()
     {
-        Debug.LogWarning("1.Move phase");
+        Debug.LogWarning("1.Move phase " + playerTurn);
         List<Unit> activeUnits = playerTurn ? ActivePlayerUnits : ActiveEnemyUnits;
         ExecutePhase<IBeforeMove>(activeUnits, (u, cb) => u.BeforeMove(cb), () => {
             ExecutePhase<IMove>( activeUnits, (u, cb) => u.Move(cb), () => {
                 ExecutePhase<IAfterMove> (activeUnits, (u, cb) => u.AfterMove(cb), () =>
                     {
-                        Debug.Log("MovePhase terminada");
+                        Debug.Log("MovePhase terminada " + playerTurn);
                         AtackPhase();
                     }
                 );
@@ -70,13 +91,13 @@ public class BattleController : MonoBehaviour
     }
     void AtackPhase()
     {
-        Debug.LogWarning("2.Attack phase");
+        Debug.LogWarning("2.Attack phase " + playerTurn);
         List<Unit> activeUnits = playerTurn ? ActivePlayerUnits : ActiveEnemyUnits;
         ExecutePhase<IBeforeAttack>(activeUnits, (u, cb) => u.BeforeAttack(cb), () => {
             ExecutePhase<IAttack>(activeUnits, (u, cb) => u.Attack(cb), () => {
                 ExecutePhase<IAfterAttack>(activeUnits, (u, cb) => u.AfterAttack(cb), () =>
                 {
-                    Debug.Log("AttackPhase terminada");
+                    Debug.Log("AttackPhase terminada " + playerTurn);
                     PlaceFase();
                 }
                 );
@@ -85,23 +106,105 @@ public class BattleController : MonoBehaviour
     }
     void PlaceFase()
     {
-        Debug.LogWarning("3.Placement started");
-        /*if (playerTurn)
+        Debug.LogWarning("3.Place phase " + playerTurn);
+
+        bool canPlayer = playerUnitsToPlace != null && playerUnitsToPlace.Count > 0;
+        bool canEnemy = enemyUnitsToPlace != null && enemyUnitsToPlace.Count > 0;
+
+        if (!canPlayer && !canEnemy)
         {
-            //PlayerManager.Instance.OnPlacementPhase(() => { OnPlacementPhaseEnded();} );
+             EndTurn();
+            return;
         }
-        else
-        {
-            enemyModule.OnPlacementPhase(() => { OnPlacementPhaseEnded(); });
-        }*/
-        OnPlacementPhaseEnded();
+
+        if (playerTurn && !canPlayer) { EndTurn(); return; }
+        if (!playerTurn && !canEnemy) { EndTurn(); return; }
+
+        if (playerTurn) playerModule.OnPlacementPhase(EndTurn);
+        else enemyModule.OnPlacementPhase(EndTurn);
     }
-    void OnPlacementPhaseEnded()
+
+
+    void EndTurn()
     {
-        Debug.Log("Placement terminado");
+        Debug.Log("Placement terminado / Fin de turno " + playerTurn);
+        if (playerTurn) playerActedThisRound = true;
+        else enemyActedThisRound = true;
         playerTurn = !playerTurn;
-        //StartTurn();
+
+        bool anyToPlace = (playerUnitsToPlace != null && playerUnitsToPlace.Count > 0) ||
+                          (enemyUnitsToPlace != null && enemyUnitsToPlace.Count > 0);
+
+        bool anyActive = (ActivePlayerUnits != null && ActivePlayerUnits.Count > 0) ||
+                         (ActiveEnemyUnits != null && ActiveEnemyUnits.Count > 0);
+        if(playerActedThisRound && enemyActedThisRound) currentTurn++;
+        if (currentTurn >= turnsToFinish)
+        {
+            Debug.LogWarning("No hay unidades activas ni por colocar. Paro el loop de turnos.");
+            return;
+        }
+
+        StartCoroutine(StartTurnNextFrame());
     }
+
+
+    public bool CanPlaceOn(Tile tile, bool isPlayer) 
+    {
+        if (tile == null) return false;
+        if (!tile.IsFree) return false;
+        if (isPlayer && tile.owner != TileOwner.Player) return false;
+        if (!isPlayer && tile.owner != TileOwner.Enemy) return false;
+        return true;
+    }
+
+    public Unit PlaceUnitOn(Tile tile, Unit unitPrefab, bool isPlayer)
+    {
+        Unit u = Instantiate(unitPrefab);
+        Vector3 spawnPos = (tile.spawnPoint != null) ? tile.spawnPoint.position : tile.transform.position;
+        u.transform.position = spawnPos;
+        tile.SetNewOccupant(u);
+
+        u.Init(isPlayer ? UnitOwner.Player : UnitOwner.Enemy, tile);
+
+        RegisterPlacedUnit(u, isPlayer);
+        return u;
+    }
+
+    public void RegisterPlacedUnit(Unit unit, bool isPlayer)
+    {
+        if (isPlayer) ActivePlayerUnits.Add(unit);
+        else ActiveEnemyUnits.Add(unit);
+    }
+ 
+    System.Collections.IEnumerator StartTurnNextFrame()
+    {
+        yield return null;
+        StartTurn();
+    }
+
+    public bool TryPeekUnitToPlace(bool forPlayer, out Unit unitPrefab)
+    {
+        var list = forPlayer ? playerUnitsToPlace : enemyUnitsToPlace;
+        if (list == null || list.Count == 0)
+        {
+            unitPrefab = null;
+            return false;
+        }
+        unitPrefab = list[0];   
+        return true;
+    }
+
+    public bool ConsumeUnitToPlace(bool forPlayer, Unit expectedPrefab)
+    {
+        var list = forPlayer ? playerUnitsToPlace : enemyUnitsToPlace;
+        if (list == null || list.Count == 0) return false;
+
+        if (list[0] != expectedPrefab) return false;
+
+        list.RemoveAt(0);
+        return true;
+    }
+
     void ExecutePhase<T>(List<Unit> units, Action<T, Action> accion, Action onPhaseFinished) where T : class
     {
         int pending = 0;

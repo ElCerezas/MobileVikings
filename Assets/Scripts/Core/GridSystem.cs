@@ -1,7 +1,16 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GridSystem : MonoBehaviour
 {
+    public IEnumerable<Tile> AllTiles()
+    {
+        for (int x = 0; x < Width; x++)
+            for (int y = 0; y < Height; y++)
+                if (tiles[x, y] != null)
+                    yield return tiles[x, y];
+    }
+
     public static GridSystem Instance { get; private set; }
 
     private Tile[,] tiles;
@@ -14,9 +23,7 @@ public class GridSystem : MonoBehaviour
         {
             Instance = this;
         }
-      
     }
-
     public void Initialize(int w, int h)
     {
         Width = w;

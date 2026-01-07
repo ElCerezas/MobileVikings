@@ -35,4 +35,11 @@ public abstract class Unit : MonoBehaviour
     {
         return life <= 0;
     }
+    public void Init(UnitOwner newOwner, Tile startTile)
+    {
+        owner = newOwner;
+        currentTile = startTile;
+        Placement(startTile);
+    }
+
 }
