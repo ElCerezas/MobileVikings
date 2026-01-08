@@ -7,6 +7,7 @@ public class BattleController : MonoBehaviour
 {
     [Header("CoreSystems")]
     [SerializeField] GridSystem gridSystem;
+    public static BattleController instance;
     public GridSystem Grid => gridSystem;
     [SerializeField] LevelLoader levelLoader;
     [SerializeField] EnemyModule enemyModule;
@@ -34,7 +35,10 @@ public class BattleController : MonoBehaviour
     public static int eventedUnits = 0;
     //public static event Action<bool> OnPlacementStatue;
     //public static event Action<bool> OnTurnStarted;
-
+    private void Awake()
+    {
+        instance = this;
+    }
     private void Start()
     {
         Debug.LogWarning("0.Start");

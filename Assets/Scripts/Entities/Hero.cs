@@ -24,7 +24,6 @@ public abstract class Hero : Unit, IMove, IAttack
 
     public virtual void Move(Action onFinished)
     {
-        Debug.Log(name + " Moved");
         moved = false;
         if (mPattern == null || currentTile == null)
         {
@@ -42,17 +41,20 @@ public abstract class Hero : Unit, IMove, IAttack
 
         foreach (Tile tile in tiles)
         {
+            if (tile == null) break;
             if (!tile.IsFree) break;
             destination = tile;
         }
         if (destination == currentTile)
         {
+            Debug.Log("catch3");
             onFinished?.Invoke();
             return;
         }
 
         currentTile.EmptyTile();
         destination.SetNewOccupant(this);
+        Debug.Log(name + $" Moved from ({currentTile.x},{currentTile.y}) to ({destination.x},{destination.y})");
         currentTile = destination;
         moved = true;
 
@@ -103,7 +105,7 @@ public abstract class Hero : Unit, IMove, IAttack
     protected IEnumerator MoveCoroutine(Vector3 targetPosition, Action onFinished)
     {
         float speed = 5f;
-
+        targetPosition = targetPosition + Vector3.up;
         while (Vector3.Distance(transform.position, targetPosition) > 0.01f)
         {
             transform.position = Vector3.MoveTowards( transform.position, targetPosition, speed * Time.deltaTime);
@@ -111,5 +113,6 @@ public abstract class Hero : Unit, IMove, IAttack
         }
 
         transform.position = targetPosition;
+        onFinished?.Invoke();
     }
 }

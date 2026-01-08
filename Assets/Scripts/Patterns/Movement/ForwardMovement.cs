@@ -5,20 +5,20 @@ public class ForwardMovement : MovementPattern
 {
     public override Tile[] Move(Tile actualTile, int moveTiles, UnitOwner owner)
     {
-        List<Tile> targetTiles = new List<Tile>();
+        Tile[] targetTiles = new Tile[moveTiles];
 
         int currentX = actualTile.x;
         int currentY = actualTile.y;
 
-        int directionY = owner == UnitOwner.Player ? 1 : -1;
+        int directionY = owner == UnitOwner.Player ? -1 : 1;
 
-        for (int i = 1; i <= moveTiles; i++)
+        for (int i = 0; i < moveTiles; i++)
         {
-            int targetY = currentY + (directionY * i);
-
+            int targetY = currentY + (directionY * (i+1));
+            targetTiles[i] = (BattleController.instance.Grid.GetTile(currentX, targetY));
         }
 
-        return targetTiles.ToArray();
+        return targetTiles;
     }
 }
 

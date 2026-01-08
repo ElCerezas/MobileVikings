@@ -51,6 +51,7 @@ public class LevelLoader : MonoBehaviour
                 GameObject tile = Instantiate(tilePrefab, pos, Quaternion.identity);
                 Tile t = tile.GetComponent<Tile>();
                 t.SetTileCoords(x, y);
+                t.name = t.x + " , " + t.y;
                 tileGrid.RegisterTile(t);
 
                 Renderer renderer = tile.GetComponent<Renderer>();

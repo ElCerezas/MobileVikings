@@ -371,11 +371,15 @@ MonoBehaviour:
   currentTurn: 0
   levelId: 0
   playerUnitsToPlace:
-  - {fileID: 500027928105952532, guid: 56e301043383351408d267b233024e45, type: 3}
-  - {fileID: 500027928105952532, guid: 56e301043383351408d267b233024e45, type: 3}
+  - {fileID: 6036156260006942949, guid: c790b03a3bd81464aa8d3c3085b20f0e, type: 3}
+  - {fileID: 6036156260006942949, guid: c790b03a3bd81464aa8d3c3085b20f0e, type: 3}
+  - {fileID: 6036156260006942949, guid: c790b03a3bd81464aa8d3c3085b20f0e, type: 3}
+  - {fileID: 6036156260006942949, guid: c790b03a3bd81464aa8d3c3085b20f0e, type: 3}
   enemyUnitsToPlace:
-  - {fileID: 500027928105952532, guid: 56e301043383351408d267b233024e45, type: 3}
-  - {fileID: 500027928105952532, guid: 56e301043383351408d267b233024e45, type: 3}
+  - {fileID: 6036156260006942949, guid: c790b03a3bd81464aa8d3c3085b20f0e, type: 3}
+  - {fileID: 6036156260006942949, guid: c790b03a3bd81464aa8d3c3085b20f0e, type: 3}
+  - {fileID: 6036156260006942949, guid: c790b03a3bd81464aa8d3c3085b20f0e, type: 3}
+  - {fileID: 6036156260006942949, guid: c790b03a3bd81464aa8d3c3085b20f0e, type: 3}
   ActivePlayerUnits: []
   ActiveEnemyUnits: []
 --- !u!114 &941301596
