@@ -145,7 +145,7 @@ public class BattleController : MonoBehaviour
             return;
         }
 
-        StartCoroutine(StartTurnNextFrame()); //Pq corrutina??
+        StartCoroutine(StartTurnNextFrame()); //Pq corrutina?? Aixo esta perque si no es fa tot al mateix frame i es queda penjat(Cal augemtar mes el temps d'espera)
     }
 
 
@@ -182,7 +182,7 @@ public class BattleController : MonoBehaviour
         StartTurn();
     }
 
-    public bool TryPeekUnitToPlace(bool forPlayer, out Unit unitPrefab) //NO ENTENC - ADRI
+    public bool TryPeekUnitToPlace(bool forPlayer, out Unit unitPrefab) //NO ENTENC - ADRI Aixo ho vaig fer perque hi havia un error que hem borrava les unitats a colocar abans de temps, potser ara ja no es necessari pero serveix per seguratat 
     {
         var list = forPlayer ? playerUnitsToPlace : enemyUnitsToPlace;
         if (list == null || list.Count == 0)
