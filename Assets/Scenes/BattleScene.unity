@@ -367,7 +367,7 @@ MonoBehaviour:
   levelLoader: {fileID: 941301594}
   enemyModule: {fileID: 5065579}
   playerModule: {fileID: 941301597}
-  turnsToFinish: 3
+  turnsToFinish: 10
   currentTurn: 0
   levelId: 0
   playerUnitsToPlace:

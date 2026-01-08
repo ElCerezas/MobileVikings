@@ -24,6 +24,7 @@ public abstract class Hero : Unit, IMove, IAttack
 
     public virtual void Move(Action onFinished)
     {
+        Debug.Log(name + " Moved");
         moved = false;
         if (mPattern == null || currentTile == null)
         {

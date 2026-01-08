@@ -32,8 +32,8 @@ public class BattleController : MonoBehaviour
     [SerializeField] List<Unit> ActiveEnemyUnits = new();
 
     public static int eventedUnits = 0;
-    public static event Action<bool> OnPlacementStatue;
-    public static event Action<bool> OnTurnStarted;
+    //public static event Action<bool> OnPlacementStatue;
+    //public static event Action<bool> OnTurnStarted;
 
     private void Start()
     {
@@ -132,11 +132,8 @@ public class BattleController : MonoBehaviour
         else enemyActedThisRound = true;
         playerTurn = !playerTurn;
 
-        bool anyToPlace = (playerUnitsToPlace != null && playerUnitsToPlace.Count > 0) ||
-                          (enemyUnitsToPlace != null && enemyUnitsToPlace.Count > 0);
-
-        bool anyActive = (ActivePlayerUnits != null && ActivePlayerUnits.Count > 0) ||
-                         (ActiveEnemyUnits != null && ActiveEnemyUnits.Count > 0);
+        bool anyToPlace = (playerUnitsToPlace != null && playerUnitsToPlace.Count > 0) || (enemyUnitsToPlace != null && enemyUnitsToPlace.Count > 0);
+        bool anyActive = (ActivePlayerUnits != null && ActivePlayerUnits.Count > 0) || (ActiveEnemyUnits != null && ActiveEnemyUnits.Count > 0);
         if(playerActedThisRound && enemyActedThisRound) currentTurn++;
         if (currentTurn >= turnsToFinish)
         {
@@ -144,11 +141,11 @@ public class BattleController : MonoBehaviour
             return;
         }
 
-        StartCoroutine(StartTurnNextFrame());
+        StartCoroutine(StartTurnNextFrame()); //Pq corrutina??
     }
 
 
-    public bool CanPlaceOn(Tile tile, bool isPlayer) 
+    public bool CanPlaceOn(Tile tile, bool isPlayer) //S'ha de fer fix de terreny conquistat
     {
         if (tile == null) return false;
         if (!tile.IsFree) return false;
@@ -157,20 +154,19 @@ public class BattleController : MonoBehaviour
         return true;
     }
 
-    public Unit PlaceUnitOn(Tile tile, Unit unitPrefab, bool isPlayer)
+    public Unit PlaceUnitOn(Tile tile, Unit unitPrefab, bool isPlayer) //TO DO: Revisar si val la pena usar dictionary per no tenir que instanciar.
     {
         Unit u = Instantiate(unitPrefab);
         Vector3 spawnPos = (tile.spawnPoint != null) ? tile.spawnPoint.position : tile.transform.position;
         u.transform.position = spawnPos;
         tile.SetNewOccupant(u);
 
-        u.Init(isPlayer ? UnitOwner.Player : UnitOwner.Enemy, tile);
+        u.Placement(tile, isPlayer ? UnitOwner.Player : UnitOwner.Enemy, 1); //TO DO calcular el tier segons la distancia
 
         RegisterPlacedUnit(u, isPlayer);
         return u;
     }
-
-    public void RegisterPlacedUnit(Unit unit, bool isPlayer)
+    public void RegisterPlacedUnit(Unit unit, bool isPlayer) //Afegir unitat a unitats activas
     {
         if (isPlayer) ActivePlayerUnits.Add(unit);
         else ActiveEnemyUnits.Add(unit);
@@ -182,7 +178,7 @@ public class BattleController : MonoBehaviour
         StartTurn();
     }
 
-    public bool TryPeekUnitToPlace(bool forPlayer, out Unit unitPrefab)
+    public bool TryPeekUnitToPlace(bool forPlayer, out Unit unitPrefab) //NO ENTENC - ADRI
     {
         var list = forPlayer ? playerUnitsToPlace : enemyUnitsToPlace;
         if (list == null || list.Count == 0)
@@ -194,7 +190,7 @@ public class BattleController : MonoBehaviour
         return true;
     }
 
-    public bool ConsumeUnitToPlace(bool forPlayer, Unit expectedPrefab)
+    public bool ConsumeUnitToPlace(bool forPlayer, Unit expectedPrefab) //Eliminar unitat placed de unitats placed
     {
         var list = forPlayer ? playerUnitsToPlace : enemyUnitsToPlace;
         if (list == null || list.Count == 0) return false;
@@ -205,7 +201,7 @@ public class BattleController : MonoBehaviour
         return true;
     }
 
-    void ExecutePhase<T>(List<Unit> units, Action<T, Action> accion, Action onPhaseFinished) where T : class
+    void ExecutePhase<T>(List<Unit> units, Action<T, Action> accion, Action onPhaseFinished) where T : class //Executar fase :)
     {
         int pending = 0;
 

@@ -16,9 +16,12 @@ public abstract class Unit : MonoBehaviour
     {
         return owner;
     }
-    public virtual void Placement(Tile t)
+    public virtual void Placement(Tile t, UnitOwner unitOwner, int _tier)
     {
         life = maxLife;
+        owner = unitOwner;
+        currentTile = t;
+        tier = _tier;
         //TODO
     }
     public virtual void ReceiveDamage(int amount)
@@ -34,12 +37,6 @@ public abstract class Unit : MonoBehaviour
     public virtual bool IsDead()
     {
         return life <= 0;
-    }
-    public void Init(UnitOwner newOwner, Tile startTile)
-    {
-        owner = newOwner;
-        currentTile = startTile;
-        Placement(startTile);
     }
 
 }
