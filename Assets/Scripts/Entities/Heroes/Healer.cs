@@ -1,11 +1,10 @@
 using System;
-using UnityEngine;
 
 public class Healer : Hero, IBeforeAttack
 {
     public void BeforeAttack(Action onFinished)
     {
-        Tile[] tiles = aPattern.Attack(currentTile, 1, owner, false, false, true);
+        Tile[] tiles = aPattern.Attack(currentTile, 1, owner);
 
         if (tiles == null || tiles[0].IsFree)
         {
@@ -17,8 +16,10 @@ public class Healer : Hero, IBeforeAttack
             onFinished?.Invoke();
             return;
         }
-
-        tiles[0].occupant.HealDamage(abilityModifiers[tier-1]);
+        if (tiles[0].occupant.GetOwner() == owner)
+        {
+            tiles[0].occupant.HealDamage(abilityModifiers[tier - 1]);
+        }
         onFinished?.Invoke();
         return;
     }

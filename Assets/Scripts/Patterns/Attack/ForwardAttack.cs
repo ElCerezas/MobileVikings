@@ -1,20 +1,21 @@
 [System.Serializable]
 public class ForwardAttack : AttackPattern
 {
-    public override Tile[] Attack(Tile actualTile, int attackRange, UnitOwner owner, bool piercing, bool affectsEnemies, bool affectsAlies)
+    public override Tile[] Attack(Tile actualTile, int attackRange, UnitOwner owner)
     {
+        Tile[] targetTiles = new Tile[attackRange];
+
         int currentX = actualTile.x;
         int currentY = actualTile.y;
-        int directionY = owner == UnitOwner.Player ? 1 : -1;
-        int targetY = currentY + (directionY * attackRange);
 
-        Tile targetTile = GridSystem.Instance.GetTile(currentX, targetY);
+        int directionY = owner == UnitOwner.Player ? -1 : 1;
 
-        if (targetTile != null)
+        for (int i = 0; i < attackRange; i++)
         {
-            return new Tile[] { targetTile };
+            int targetY = currentY + (directionY * (i + 1));
+            targetTiles[i] = (BattleController.instance.Grid.GetTile(currentX, targetY));
         }
 
-        return new Tile[0];
+        return targetTiles[0] != null ? targetTiles : null;
     }
 }

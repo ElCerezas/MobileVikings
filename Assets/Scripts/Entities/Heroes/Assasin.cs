@@ -11,7 +11,7 @@ public class Assasin : Hero, IAfterMove
             return;
         }
 
-        Tile[] tiles = aPattern.Attack(currentTile, 3, owner, false, true, true);
+        Tile[] tiles = aPattern.Attack(currentTile, 3, owner);
 
         if (tiles == null || tiles.Length < 3)
         {

@@ -69,7 +69,7 @@ public abstract class Hero : Unit, IMove, IAttack
             onFinished?.Invoke();
             return;
         }
-        Tile[] tiles = aPattern.Attack(currentTile, attackRange, owner, piercingAttack, affectsEnemies, affectsAllies);
+        Tile[] tiles = aPattern.Attack(currentTile, attackRange, owner);
 
         if (tiles == null || tiles.Length == 0)
         {
