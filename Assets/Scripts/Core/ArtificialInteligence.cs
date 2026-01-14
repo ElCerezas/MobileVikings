@@ -26,7 +26,7 @@ public class ArtificialInteligence : EnemyModule
         }
 
         battle.PlaceUnitOn(chosen, selectedUnit, isPlayer: false);
-        battle.ConsumeUnitToPlace(forPlayer: false, selectedUnit);
+        //battle.ConsumeUnitToPlace(forPlayer: false, selectedUnit);
         onFinished?.Invoke();
     }
 }

@@ -105,7 +105,7 @@ public abstract class Hero : Unit, IMove, IAttack
     protected IEnumerator MoveCoroutine(Vector3 targetPosition, Action onFinished)
     {
         float speed = 5f;
-        targetPosition = targetPosition + Vector3.up;
+        targetPosition = targetPosition + (Vector3.up/2);
         while (Vector3.Distance(transform.position, targetPosition) > 0.01f)
         {
             transform.position = Vector3.MoveTowards( transform.position, targetPosition, speed * Time.deltaTime);

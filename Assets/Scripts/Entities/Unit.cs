@@ -28,6 +28,7 @@ public abstract class Unit : MonoBehaviour
     {
         life -= amount;
         life = Mathf.Max(life, 0);
+        if (IsDead()) Die();
     }
     public virtual void HealDamage(int amount)
     {
@@ -37,6 +38,15 @@ public abstract class Unit : MonoBehaviour
     public virtual bool IsDead()
     {
         return life <= 0;
+    }
+    public virtual void Die()
+    {
+        currentTile.EmptyTile();
+        currentTile = null;
+
+        if(owner == UnitOwner.Player) BattleController.instance.ActivePlayerUnits?.Remove(this);
+        else BattleController.instance.ActiveEnemyUnits?.Remove(this);
+        Destroy(gameObject);
     }
 
 }

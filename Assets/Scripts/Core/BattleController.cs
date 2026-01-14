@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 
 public class BattleController : MonoBehaviour
@@ -14,7 +15,6 @@ public class BattleController : MonoBehaviour
     [SerializeField] LevelLoader levelLoader;
     public EnemyModule enemyModule;
     public PlayerPlacementModule playerModule;
-    public int turnsToFinish = 5;
     [SerializeField] private int currentTurn = 0;
 
 
@@ -29,14 +29,11 @@ public class BattleController : MonoBehaviour
 
 
     [Header("Placement")]
-    [SerializeField] List<Unit> playerUnitsToPlace; 
-    [SerializeField] List<Unit> enemyUnitsToPlace;
-    [SerializeField] List<Unit> ActivePlayerUnits = new();
-    [SerializeField] List<Unit> ActiveEnemyUnits = new();
+    //[SerializeField] List<Unit> playerUnitsToPlace; 
+    //[SerializeField] List<Unit> enemyUnitsToPlace;
+    public List<Unit> ActivePlayerUnits = new();
+    public List<Unit> ActiveEnemyUnits = new();
 
-    public static int eventedUnits = 0;
-    //public static event Action<bool> OnPlacementStatue;
-    //public static event Action<bool> OnTurnStarted;
     private void Awake()
     {
         instance = this;
@@ -104,19 +101,6 @@ public class BattleController : MonoBehaviour
     void PlaceFase()
     {
         Debug.LogWarning("3.Place phase " + playerTurn);
-
-        bool canPlayer = playerUnitsToPlace != null && playerUnitsToPlace.Count > 0;
-        bool canEnemy = enemyUnitsToPlace != null && enemyUnitsToPlace.Count > 0;
-
-        if (!canPlayer && !canEnemy)
-        {
-             EndTurn();
-            return;
-        }
-
-        if (playerTurn && !canPlayer) { EndTurn(); return; }
-        if (!playerTurn && !canEnemy) { EndTurn(); return; }
-
         if (playerTurn) playerModule.OnPlacementPhase(EndTurn);
         else enemyModule.OnPlacementPhase(EndTurn);
     }
@@ -129,15 +113,7 @@ public class BattleController : MonoBehaviour
         else enemyActedThisRound = true;
         playerTurn = !playerTurn;
 
-        bool anyToPlace = (playerUnitsToPlace != null && playerUnitsToPlace.Count > 0) || (enemyUnitsToPlace != null && enemyUnitsToPlace.Count > 0);
-        bool anyActive = (ActivePlayerUnits != null && ActivePlayerUnits.Count > 0) || (ActiveEnemyUnits != null && ActiveEnemyUnits.Count > 0);
         if(playerActedThisRound && enemyActedThisRound) currentTurn++;
-        if (currentTurn >= turnsToFinish)
-        {
-            Debug.LogWarning("No hay unidades activas ni por colocar. Paro el loop de turnos.");
-            return;
-        }
-
         StartCoroutine(StartTurnNextFrame());
     }
 
@@ -153,8 +129,7 @@ public class BattleController : MonoBehaviour
     public Unit PlaceUnitOn(Tile tile, Unit unitPrefab, bool isPlayer) //TO DO: Revisar si val la pena usar dictionary per no tenir que instanciar.
     {
         Unit u = Instantiate(unitPrefab);
-        Vector3 spawnPos = (tile.spawnPoint != null) ? tile.spawnPoint.position : tile.transform.position;
-        u.transform.position = spawnPos;
+        u.transform.position = tile.transform.position + (Vector3.up / 2);
         tile.SetNewOccupant(u);
 
         u.Placement(tile, isPlayer ? UnitOwner.Player : UnitOwner.Enemy, 1); //TO DO calcular el tier segons la distancia
@@ -199,7 +174,7 @@ public class BattleController : MonoBehaviour
         return true;
     }*/
 
-    public bool ConsumeUnitToPlace(bool forPlayer, Unit expectedPrefab) //Eliminar unitat placed de unitats placed
+    /*public bool ConsumeUnitToPlace(bool forPlayer, Unit expectedPrefab) //Eliminar unitat placed de unitats placed
     {
         var list = forPlayer ? playerUnitsToPlace : enemyUnitsToPlace;
         if (list == null || list.Count == 0) return false;
@@ -208,7 +183,7 @@ public class BattleController : MonoBehaviour
 
         list.RemoveAt(0);
         return true;
-    }
+    }*/
 
     void ExecutePhase<T>(List<Unit> units, Action<T, Action> accion, Action onPhaseFinished) where T : class //Executar fase :)
     {

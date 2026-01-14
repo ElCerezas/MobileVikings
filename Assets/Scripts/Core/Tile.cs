@@ -4,7 +4,6 @@ public class Tile : MonoBehaviour
 {
     public int x;
     public int y;
-    public Transform spawnPoint;
 
     public Unit occupant;
     public TileOwner owner;// { get; private set; }

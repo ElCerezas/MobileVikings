@@ -39,10 +39,10 @@ public class PlayerPlacementModule : MonoBehaviour
             }
 
             battle.PlaceUnitOn(targetTile, pendingPrefab, isPlayer: true);
-            battle.ConsumeUnitToPlace(true, pendingPrefab);
+            //battle.ConsumeUnitToPlace(true, pendingPrefab);
 
             waitingInput = false;
-            pendingPrefab = null;
+            //pendingPrefab = null;
 
             if (!finishedThisPhase)
             {
