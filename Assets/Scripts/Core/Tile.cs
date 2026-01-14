@@ -33,5 +33,10 @@ public class Tile : MonoBehaviour
     {
         owner = newOwner;
     }
+    public void OnMouseDown()
+    {
+        if (!BattleController.instance.playerTurn) return;
+        BattleController.instance.playerModule.TryPlaceUnit(this);
+    }
 
 }

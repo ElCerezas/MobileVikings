@@ -5,13 +5,15 @@ using UnityEngine;
 
 public class BattleController : MonoBehaviour
 {
+    [SerializeField]bool debugStop = false;
+
     [Header("CoreSystems")]
     [SerializeField] GridSystem gridSystem;
     public static BattleController instance;
     public GridSystem Grid => gridSystem;
     [SerializeField] LevelLoader levelLoader;
-    [SerializeField] EnemyModule enemyModule;
-    [SerializeField] PlayerPlacementModule playerModule;
+    public EnemyModule enemyModule;
+    public PlayerPlacementModule playerModule;
     public int turnsToFinish = 5;
     [SerializeField] private int currentTurn = 0;
 
@@ -20,7 +22,7 @@ public class BattleController : MonoBehaviour
     [SerializeField] int levelId = 1;
 
     [Header("TurnManager")]
-    bool playerTurn = true;
+    public bool playerTurn = true;
     public delegate void PlacementEnded();
     bool playerActedThisRound;
     bool enemyActedThisRound;
@@ -52,15 +54,6 @@ public class BattleController : MonoBehaviour
         enemyActedThisRound = false;
 
         StartTurn();
-    }
-    
-    private void Update()
-    {
-        if (Input.GetKey(KeyCode.P))
-        {
-            Debug.Log("action");
-            StartTurn();
-        }
     }
     bool CoinFlip()
     {
@@ -145,7 +138,7 @@ public class BattleController : MonoBehaviour
             return;
         }
 
-        StartCoroutine(StartTurnNextFrame()); //Pq corrutina?? Aixo esta perque si no es fa tot al mateix frame i es queda penjat(Cal augemtar mes el temps d'espera)
+        StartCoroutine(StartTurnNextFrame());
     }
 
 
@@ -157,7 +150,6 @@ public class BattleController : MonoBehaviour
         if (!isPlayer && tile.owner != TileOwner.Enemy) return false;
         return true;
     }
-
     public Unit PlaceUnitOn(Tile tile, Unit unitPrefab, bool isPlayer) //TO DO: Revisar si val la pena usar dictionary per no tenir que instanciar.
     {
         Unit u = Instantiate(unitPrefab);
@@ -178,11 +170,24 @@ public class BattleController : MonoBehaviour
  
     System.Collections.IEnumerator StartTurnNextFrame()
     {
-        yield return null;
-        StartTurn();
+        if (debugStop)
+        {
+            while (!Input.GetKeyDown(KeyCode.N))
+            {
+                yield return null;
+            }
+
+            StartTurn();
+        }
+        else
+        {
+            yield return null;
+            StartTurn();
+        }
+            
     }
 
-    public bool TryPeekUnitToPlace(bool forPlayer, out Unit unitPrefab) //NO ENTENC - ADRI Aixo ho vaig fer perque hi havia un error que hem borrava les unitats a colocar abans de temps, potser ara ja no es necessari pero serveix per seguratat 
+    /*public bool TryPeekUnitToPlace(bool forPlayer, out Unit unitPrefab) //NO ENTENC - ADRI Aixo ho vaig fer perque hi havia un error que hem borrava les unitats a colocar abans de temps, potser ara ja no es necessari pero serveix per seguratat 
     {
         var list = forPlayer ? playerUnitsToPlace : enemyUnitsToPlace;
         if (list == null || list.Count == 0)
@@ -192,7 +197,7 @@ public class BattleController : MonoBehaviour
         }
         unitPrefab = list[0];   
         return true;
-    }
+    }*/
 
     public bool ConsumeUnitToPlace(bool forPlayer, Unit expectedPrefab) //Eliminar unitat placed de unitats placed
     {

@@ -1,18 +1,17 @@
 using static BattleController;
-
 using System.Linq;
 using UnityEngine;
 
 public class ArtificialInteligence : EnemyModule
 {
+    public Unit selectedUnit;
     public override void OnPlacementPhase(PlacementEnded onFinished)
     {
-        if (!battle.TryPeekUnitToPlace(forPlayer: false, out Unit unitPrefab))
-
+        /*if (!battle.TryPeekUnitToPlace(forPlayer: false, out Unit unitPrefab))
         {
             onFinished?.Invoke();
             return;
-        }
+        }*/
 
         Tile chosen = battle.Grid.AllTiles()
             .Where(t => battle.CanPlaceOn(t, isPlayer: false))
@@ -26,8 +25,8 @@ public class ArtificialInteligence : EnemyModule
             return;
         }
 
-        battle.PlaceUnitOn(chosen, unitPrefab, isPlayer: false);
-        battle.ConsumeUnitToPlace(forPlayer: false, unitPrefab);
+        battle.PlaceUnitOn(chosen, selectedUnit, isPlayer: false);
+        battle.ConsumeUnitToPlace(forPlayer: false, selectedUnit);
         onFinished?.Invoke();
     }
 }
