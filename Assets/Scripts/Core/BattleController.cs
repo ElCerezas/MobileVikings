@@ -33,6 +33,9 @@ public class BattleController : MonoBehaviour
     //[SerializeField] List<Unit> enemyUnitsToPlace;
     public List<Unit> ActivePlayerUnits = new();
     public List<Unit> ActiveEnemyUnits = new();
+    [Header("Scoring")]
+    public int playerConquest = 3;
+    public int enemmyConquest = 3;
 
     private void Awake()
     {
@@ -68,6 +71,7 @@ public class BattleController : MonoBehaviour
         ExecutePhase<IStartTurn>(activeUnits, (u, cb) => u.StartTurn(cb), () => { MovePhase(); });
         
     }
+    #region Phases
     void MovePhase()
     {
         Debug.LogWarning("1.Move phase " + playerTurn);
@@ -104,20 +108,17 @@ public class BattleController : MonoBehaviour
         if (playerTurn) playerModule.OnPlacementPhase(EndTurn);
         else enemyModule.OnPlacementPhase(EndTurn);
     }
-
-
     void EndTurn()
     {
-        Debug.Log("Placement terminado / Fin de turno " + playerTurn);
         if (playerTurn) playerActedThisRound = true;
         else enemyActedThisRound = true;
         playerTurn = !playerTurn;
 
         if(playerActedThisRound && enemyActedThisRound) currentTurn++;
-        StartCoroutine(StartTurnNextFrame());
+        CheckForGameEnd();
     }
-
-
+    #endregion
+    #region Placement
     public bool CanPlaceOn(Tile tile, bool isPlayer) //S'ha de fer fix de terreny conquistat
     {
         if (tile == null) return false;
@@ -142,7 +143,39 @@ public class BattleController : MonoBehaviour
         if (isPlayer) ActivePlayerUnits.Add(unit);
         else ActiveEnemyUnits.Add(unit);
     }
- 
+    #endregion
+    #region Conquest
+    public void CheckForGameEnd()
+    {
+        if (enemmyConquest <= 0)
+        {
+            Debug.Log("==PLAYER WIN===");
+        }
+        else if (playerConquest <= 0)
+        {
+            Debug.Log("==ENEMY WIN===");
+        }
+        else
+        {
+            StartCoroutine(StartTurnNextFrame());
+        }
+    }
+    public void UnitDied(UnitOwner owner)
+    {
+        if (owner == UnitOwner.Enemy) playerConquest++;
+        else enemmyConquest++;
+    }
+    public void UnitReachedEnd(UnitOwner owner)
+    {
+        if (owner == UnitOwner.Enemy) playerConquest--;
+        else enemmyConquest--;
+    }
+    void UpdateConquestTiles()
+    {
+
+    }
+
+    #endregion
     System.Collections.IEnumerator StartTurnNextFrame()
     {
         if (debugStop)
@@ -161,30 +194,6 @@ public class BattleController : MonoBehaviour
         }
             
     }
-
-    /*public bool TryPeekUnitToPlace(bool forPlayer, out Unit unitPrefab) //NO ENTENC - ADRI Aixo ho vaig fer perque hi havia un error que hem borrava les unitats a colocar abans de temps, potser ara ja no es necessari pero serveix per seguratat 
-    {
-        var list = forPlayer ? playerUnitsToPlace : enemyUnitsToPlace;
-        if (list == null || list.Count == 0)
-        {
-            unitPrefab = null;
-            return false;
-        }
-        unitPrefab = list[0];   
-        return true;
-    }*/
-
-    /*public bool ConsumeUnitToPlace(bool forPlayer, Unit expectedPrefab) //Eliminar unitat placed de unitats placed
-    {
-        var list = forPlayer ? playerUnitsToPlace : enemyUnitsToPlace;
-        if (list == null || list.Count == 0) return false;
-
-        if (list[0] != expectedPrefab) return false;
-
-        list.RemoveAt(0);
-        return true;
-    }*/
-
     void ExecutePhase<T>(List<Unit> units, Action<T, Action> accion, Action onPhaseFinished) where T : class //Executar fase :)
     {
         int pending = 0;
@@ -199,4 +208,27 @@ public class BattleController : MonoBehaviour
         }
         if (pending == 0) onPhaseFinished?.Invoke();
     }
+
+    /*public bool TryPeekUnitToPlace(bool forPlayer, out Unit unitPrefab) //NO ENTENC - ADRI Aixo ho vaig fer perque hi havia un error que hem borrava les unitats a colocar abans de temps, potser ara ja no es necessari pero serveix per seguratat 
+    {
+        var list = forPlayer ? playerUnitsToPlace : enemyUnitsToPlace;
+        if (list == null || list.Count == 0)
+        {
+            unitPrefab = null;
+            return false;
+        }
+        unitPrefab = list[0];   
+        return true;
+    }*/
+    /*public bool ConsumeUnitToPlace(bool forPlayer, Unit expectedPrefab) //Eliminar unitat placed de unitats placed
+    {
+        var list = forPlayer ? playerUnitsToPlace : enemyUnitsToPlace;
+        if (list == null || list.Count == 0) return false;
+
+        if (list[0] != expectedPrefab) return false;
+
+        list.RemoveAt(0);
+        return true;
+    }*/
+
 }
