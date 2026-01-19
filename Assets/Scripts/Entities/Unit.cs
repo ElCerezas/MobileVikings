@@ -16,13 +16,15 @@ public abstract class Unit : MonoBehaviour
     {
         return owner;
     }
-    public virtual void Placement(Tile t, UnitOwner unitOwner, int _tier)
+    public virtual void Instantiate(UnitOwner owner)
+    {
+        this.owner = owner;
+    }
+    public virtual void Placement(Tile t, int _tier)
     {
         life = maxLife;
-        owner = unitOwner;
         currentTile = t;
         tier = _tier;
-        //TODO
     }
     public virtual void ReceiveDamage(int amount)
     {
@@ -44,11 +46,6 @@ public abstract class Unit : MonoBehaviour
         currentTile.EmptyTile();
         currentTile = null;
         BattleController.instance.UnitScore(owner, true);
-        ReturnToDeck();
-    }
-    public virtual void ReturnToDeck()
-    {
-        if (owner == UnitOwner.Player) BattleController.instance.ActivePlayerUnits?.Remove(this);
-        else BattleController.instance.ActiveEnemyUnits?.Remove(this);
+        UnitPlacementManager.instance.ReturnToDeck(this);
     }
 }

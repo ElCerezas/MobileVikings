@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class BattleController : MonoBehaviour
 {
-    [SerializeField]bool debugStop = false;
-
+    public static BattleController instance;
     [Header("CoreSystems")]
     [SerializeField] GridSystem gridSystem;
-    public static BattleController instance;
-    public GridSystem Grid => gridSystem;
+    [SerializeField] UnitPlacementManager placementManager;
     [SerializeField] LevelLoader levelLoader;
-    public EnemyModule enemyModule;
-    public PlayerPlacementModule playerModule;
+    [SerializeField] EnemyModule enemyModule;
+    
+    
+    
     [SerializeField] private int currentTurn = 0;
 
 
@@ -47,8 +47,7 @@ public class BattleController : MonoBehaviour
         levelLoader.GenerateLevel(levelLoader.LoadLevelFromResources(levelId));
         Debug.LogWarning("Level Loaded " + levelLoader);
         playerTurn = CoinFlip();
-        PlaceStatues();
-        playerModule.Initialize(this);
+        //PlaceStatues();
         enemyModule.Initialize(this);
         playerActedThisRound = false;
         enemyActedThisRound = false;
@@ -106,8 +105,7 @@ public class BattleController : MonoBehaviour
     }
     void PlaceFase()
     {
-        //Debug.LogWarning("3.Place phase " + playerTurn);
-        if (playerTurn) playerModule.OnPlacementPhase(EndTurn);
+        if (playerTurn) placementManager.OnPlayerPlacementPhase(EndTurn);
         else enemyModule.OnPlacementPhase(EndTurn);
     }
     void EndTurn()
@@ -118,32 +116,6 @@ public class BattleController : MonoBehaviour
 
         if(playerActedThisRound && enemyActedThisRound) currentTurn++;
         StartCoroutine(StartTurnNextFrame());
-    }
-    #endregion
-    #region Placement
-    public bool CanPlaceOn(Tile tile, bool isPlayer) //S'ha de fer fix de terreny conquistat
-    {
-        if (tile == null) return false;
-        if (!tile.IsFree) return false;
-        if (isPlayer && tile.owner != TileOwner.Player) return false;
-        if (!isPlayer && tile.owner != TileOwner.Enemy) return false;
-        return true;
-    }
-    public Unit PlaceUnitOn(Tile tile, Unit unitPrefab, bool isPlayer) //TO DO: Revisar si val la pena usar dictionary per no tenir que instanciar.
-    {
-        Unit u = Instantiate(unitPrefab);
-        u.transform.position = tile.transform.position + (Vector3.up / 2);
-        tile.SetNewOccupant(u);
-
-        u.Placement(tile, isPlayer ? UnitOwner.Player : UnitOwner.Enemy, 1); //TO DO calcular el tier segons la distancia
-
-        RegisterPlacedUnit(u, isPlayer);
-        return u;
-    }
-    public void RegisterPlacedUnit(Unit unit, bool isPlayer) //Afegir unitat a unitats activas
-    {
-        if (isPlayer) ActivePlayerUnits.Add(unit);
-        else ActiveEnemyUnits.Add(unit);
     }
     #endregion
     #region Conquest
@@ -209,23 +181,15 @@ public class BattleController : MonoBehaviour
         playerPlane.position = Vector3.back * ((height - playerConquest) + 0.5f);
     }
     #endregion
+    public void RegisterPlacedUnit(Unit unit) //Afegir unitat a unitats activas
+    {
+        if (unit.GetOwner() == UnitOwner.Player) ActivePlayerUnits.Add(unit);
+        else ActiveEnemyUnits.Add(unit);
+    }
     System.Collections.IEnumerator StartTurnNextFrame()
     {
-        if (debugStop)
-        {
-            while (!Input.GetKeyDown(KeyCode.N))
-            {
-                yield return null;
-            }
-
-            StartTurn();
-        }
-        else
-        {
-            yield return null;
-            StartTurn();
-        }
-            
+        yield return null;
+        StartTurn();
     }
     void ExecutePhase<T>(List<Unit> units, Action<T, Action> accion, Action onPhaseFinished) where T : class //Executar fase :)
     {
@@ -241,27 +205,4 @@ public class BattleController : MonoBehaviour
         }
         if (pending == 0) onPhaseFinished?.Invoke();
     }
-
-    /*public bool TryPeekUnitToPlace(bool forPlayer, out Unit unitPrefab) //NO ENTENC - ADRI Aixo ho vaig fer perque hi havia un error que hem borrava les unitats a colocar abans de temps, potser ara ja no es necessari pero serveix per seguratat 
-    {
-        var list = forPlayer ? playerUnitsToPlace : enemyUnitsToPlace;
-        if (list == null || list.Count == 0)
-        {
-            unitPrefab = null;
-            return false;
-        }
-        unitPrefab = list[0];   
-        return true;
-    }*/
-        /*public bool ConsumeUnitToPlace(bool forPlayer, Unit expectedPrefab) //Eliminar unitat placed de unitats placed
-        {
-            var list = forPlayer ? playerUnitsToPlace : enemyUnitsToPlace;
-            if (list == null || list.Count == 0) return false;
-
-            if (list[0] != expectedPrefab) return false;
-
-            list.RemoveAt(0);
-            return true;
-        }*/
-
-    }
+}

@@ -15,7 +15,7 @@ public class ForwardMovement : MovementPattern
         for (int i = 0; i < moveTiles; i++)
         {
             int targetY = currentY + (directionY * (i+1));
-            targetTiles[i] = (BattleController.instance.Grid.GetTile(currentX, targetY));
+            targetTiles[i] = (GridSystem.instance.GetTile(currentX, targetY));
         }
 
         //return targetTiles[0] != null ? targetTiles : null;

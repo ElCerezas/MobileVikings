@@ -119,6 +119,87 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &433864570
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 433864572}
+  - component: {fileID: 433864571}
+  m_Layer: 0
+  m_Name: PlacementManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &433864571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 433864570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b9e776a499db15459fa1285bdca64f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnitPlacementManager
+  playerDeck: []
+  enemyDeck: []
+  playerDeckOrigin: {fileID: 541351415}
+  enemyDeckOrigin: {fileID: 1550950300}
+  slotSpacing: 1.5
+  selectedUnit: {fileID: 0}
+--- !u!4 &433864572
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 433864570}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 10.40285, y: 0, z: -25.7859}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &541351414
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 541351415}
+  m_Layer: 0
+  m_Name: PlayerDeckOrigin
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &541351415
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 541351414}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 10.40285, y: 0, z: -25.7859}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &669140919
 GameObject:
   m_ObjectHideFlags: 0
@@ -319,11 +400,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20e17ef8c10466049b27e6d3f1f10ecf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BattleController
-  debugStop: 0
   gridSystem: {fileID: 1722583516}
+  placementManager: {fileID: 0}
   levelLoader: {fileID: 941301594}
   enemyModule: {fileID: 941301596}
-  playerModule: {fileID: 941301597}
   currentTurn: 0
   levelId: 0
   playerTurn: 1
@@ -358,7 +438,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 296a8d3fecc8bea42bbc39af083c8500, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerPlacementModule
+  battle: {fileID: 0}
+  waitingInput: 0
   pendingPrefab: {fileID: 6036156260006942949, guid: c790b03a3bd81464aa8d3c3085b20f0e, type: 3}
+  finishedThisPhase: 0
 --- !u!1001 &1180281545
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -421,6 +504,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 987075770287334554, guid: 9f04c5ba0745eb5479133254fc072881, type: 3}
   m_PrefabInstance: {fileID: 1180281545}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1550950299
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1550950300}
+  m_Layer: 0
+  m_Name: Enemydeckcorigin
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1550950300
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1550950299}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 10.40285, y: 0, z: -25.7859}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1722583514
 GameObject:
   m_ObjectHideFlags: 0
@@ -672,5 +786,8 @@ SceneRoots:
   - {fileID: 669140921}
   - {fileID: 941301593}
   - {fileID: 1722583515}
+  - {fileID: 433864572}
   - {fileID: 9140569075664913837}
   - {fileID: 1180281545}
+  - {fileID: 541351415}
+  - {fileID: 1550950300}

@@ -113,7 +113,7 @@ public abstract class Hero : Unit, IMove, IAttack
         currentTile.EmptyTile();
         currentTile = null;
         BattleController.instance.UnitScore(owner, false);
-        ReturnToDeck();
+        UnitPlacementManager.instance.ReturnToDeck(this);
     }
     protected IEnumerator MoveCoroutine(Vector3 targetPosition, Action onFinished)
     {

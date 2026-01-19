@@ -35,7 +35,7 @@ public class Tile : MonoBehaviour
     public void OnMouseDown()
     {
         if (!BattleController.instance.playerTurn) return;
-        BattleController.instance.playerModule.TryPlaceUnit(this);
+        UnitPlacementManager.instance.PlayerTryPlace(this);
     }
 
 }
