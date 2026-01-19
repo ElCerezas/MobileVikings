@@ -43,7 +43,7 @@ public class BattleController : MonoBehaviour
     }
     private void Start()
     {
-        Debug.LogWarning("0.Start");
+        //Debug.LogWarning("0.Start");
         levelLoader.GenerateLevel(levelLoader.LoadLevelFromResources(levelId));
         Debug.LogWarning("Level Loaded " + levelLoader);
         playerTurn = CoinFlip();
@@ -65,8 +65,7 @@ public class BattleController : MonoBehaviour
     }
     void StartTurn()
     {
-        Debug.LogWarning("TURN STARTED "  + playerTurn);
-        UpdateConquestTiles();
+        //Debug.LogWarning("TURN STARTED "  + playerTurn);
         List<Unit> activeUnits = playerTurn ? ActivePlayerUnits : ActiveEnemyUnits;
         ExecutePhase<IStartTurn>(activeUnits, (u, cb) => u.StartTurn(cb), () => { MovePhase(); });
         
@@ -74,37 +73,40 @@ public class BattleController : MonoBehaviour
     #region Phases
     void MovePhase()
     {
-        Debug.LogWarning("1.Move phase " + playerTurn);
+        //Debug.LogWarning("1.Move phase " + playerTurn);
         List<Unit> activeUnits = playerTurn ? ActivePlayerUnits : ActiveEnemyUnits;
         ExecutePhase<IBeforeMove>(activeUnits, (u, cb) => u.BeforeMove(cb), () => {
             ExecutePhase<IMove>( activeUnits, (u, cb) => u.Move(cb), () => {
                 ExecutePhase<IAfterMove> (activeUnits, (u, cb) => u.AfterMove(cb), () =>
                     {
-                        Debug.Log("MovePhase terminada " + playerTurn);
                         AtackPhase();
                     }
                 );
             });
         });
+        UpdateConquestTiles();
+        CheckForGameEnd();
     }
     void AtackPhase()
     {
-        Debug.LogWarning("2.Attack phase " + playerTurn);
+        UpdateConquestTiles();
+        //Debug.LogWarning("2.Attack phase " + playerTurn);
         List<Unit> activeUnits = playerTurn ? ActivePlayerUnits : ActiveEnemyUnits;
         ExecutePhase<IBeforeAttack>(activeUnits, (u, cb) => u.BeforeAttack(cb), () => {
             ExecutePhase<IAttack>(activeUnits, (u, cb) => u.Attack(cb), () => {
                 ExecutePhase<IAfterAttack>(activeUnits, (u, cb) => u.AfterAttack(cb), () =>
                 {
-                    Debug.Log("AttackPhase terminada " + playerTurn);
                     PlaceFase();
                 }
                 );
             });
         });
+        UpdateConquestTiles();
+        CheckForGameEnd();
     }
     void PlaceFase()
     {
-        Debug.LogWarning("3.Place phase " + playerTurn);
+        //Debug.LogWarning("3.Place phase " + playerTurn);
         if (playerTurn) playerModule.OnPlacementPhase(EndTurn);
         else enemyModule.OnPlacementPhase(EndTurn);
     }
@@ -115,7 +117,7 @@ public class BattleController : MonoBehaviour
         playerTurn = !playerTurn;
 
         if(playerActedThisRound && enemyActedThisRound) currentTurn++;
-        CheckForGameEnd();
+        StartCoroutine(StartTurnNextFrame());
     }
     #endregion
     #region Placement

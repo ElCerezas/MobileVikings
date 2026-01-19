@@ -31,7 +31,7 @@ public abstract class Hero : Unit, IMove, IAttack
             return;
         }
         Tile[] tiles = mPattern.Move(currentTile, movementRange, owner);
-        if (tiles == null || tiles.Length == 0)
+        if (tiles == null || tiles.Length == 0) //No existeix moviment
         {
             onFinished?.Invoke();
             return;
@@ -41,20 +41,26 @@ public abstract class Hero : Unit, IMove, IAttack
 
         foreach (Tile tile in tiles)
         {
-            if (tile == null) break;
+            if (tile == null)
+            {
+                Debug.Log($"{gameObject.name} arrived on the final row");
+                FinalRowScore();
+                onFinished?.Invoke();
+                return;
+            }
             if (!tile.IsFree) break;
+            
             destination = tile;
         }
         if (destination == currentTile)
         {
-            Debug.Log("catch3");
             onFinished?.Invoke();
             return;
         }
 
         currentTile.EmptyTile();
         destination.SetNewOccupant(this);
-        Debug.Log(name + $" Moved from ({currentTile.x},{currentTile.y}) to ({destination.x},{destination.y})");
+        //Debug.Log(name + $" Moved from ({currentTile.x},{currentTile.y}) to ({destination.x},{destination.y})");
         currentTile = destination;
         moved = true;
 
@@ -101,6 +107,13 @@ public abstract class Hero : Unit, IMove, IAttack
         }
 
         onFinished?.Invoke();
+    }
+    public virtual void FinalRowScore() //Quan arriba al final del tauler
+    {
+        currentTile.EmptyTile();
+        currentTile = null;
+        BattleController.instance.UnitScore(owner, false);
+        ReturnToDeck();
     }
     protected IEnumerator MoveCoroutine(Vector3 targetPosition, Action onFinished)
     {

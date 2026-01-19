@@ -13,19 +13,19 @@ public class ArtificialInteligence : EnemyModule
             return;
         }*/
 
-        Tile chosen = battle.Grid.GetAllTiles()[0, 0];
+        /*Tile chosen = battle.Grid.GetAllTiles()[0, 0];
             /*Where(t => battle.CanPlaceOn(t, isPlayer: false))
             .OrderBy(t => Random.value)
             .FirstOrDefault();*/
 
-        if (chosen == null)
+        /*if (chosen == null)
         {
             Debug.Log("IA: no hay tiles enemigas libres para colocar.");
             onFinished?.Invoke();
             return;
-        }
+        }*/
 
-        battle.PlaceUnitOn(chosen, selectedUnit, isPlayer: false);
+        battle.PlaceUnitOn(GridSystem.instance.GetTile(0,0), selectedUnit, isPlayer: false);
         //battle.ConsumeUnitToPlace(forPlayer: false, selectedUnit);
         onFinished?.Invoke();
     }

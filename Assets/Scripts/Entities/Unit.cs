@@ -43,12 +43,7 @@ public abstract class Unit : MonoBehaviour
     {
         currentTile.EmptyTile();
         currentTile = null;
-        ReturnToDeck();
-    }
-    public virtual void FinalRowScore() //Quan arriba al final del tauler
-    {
-        currentTile.EmptyTile();
-        currentTile = null;
+        BattleController.instance.UnitScore(owner, true);
         ReturnToDeck();
     }
     public virtual void ReturnToDeck()
