@@ -25,7 +25,7 @@ public class WatafakAmigoMovement : MovementPattern
             int targetX = currentX + offset.x;
             int targetY = currentY + (offset.y * directionY);
 
-            Tile tile = GridSystem.Instance.GetTile(targetX, targetY);
+            Tile tile = GridSystem.instance.GetTile(targetX, targetY);
             if (tile != null) targetTiles.Add(tile);
         }
 

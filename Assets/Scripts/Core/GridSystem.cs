@@ -3,26 +3,14 @@ using UnityEngine;
 
 public class GridSystem : MonoBehaviour
 {
-    public IEnumerable<Tile> AllTiles()
-    {
-        for (int x = 0; x < Width; x++)
-            for (int y = 0; y < Height; y++)
-                if (tiles[x, y] != null)
-                    yield return tiles[x, y];
-    }
-
-    public static GridSystem Instance { get; private set; }
-
+    public static GridSystem instance { get; private set; }
     private Tile[,] tiles;
     public int Width { get; private set; }
     public int Height { get; private set; }
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
+        instance = this;
     }
     public void Initialize(int w, int h)
     {
@@ -30,15 +18,12 @@ public class GridSystem : MonoBehaviour
         Height = h;
         tiles = new Tile[w, h];
     }
-
     public Tile GetTile(int x, int y)
     {
         if (x < 0 || y < 0 || x >= Width || y >= Height)
             return null;
         return tiles[x, y];
     }
-
-    
     public void RegisterTile(Tile tile)
     {
         if (tile.x >= 0 && tile.x < Width && tile.y >= 0 && tile.y < Height)
@@ -46,4 +31,9 @@ public class GridSystem : MonoBehaviour
             tiles[tile.x, tile.y] = tile;
         }
     }
+    public Tile[,] GetAllTiles()
+    {
+        return tiles;
+    }
+
 }

@@ -13,10 +13,10 @@ public class ArtificialInteligence : EnemyModule
             return;
         }*/
 
-        Tile chosen = battle.Grid.AllTiles()
-            .Where(t => battle.CanPlaceOn(t, isPlayer: false))
+        Tile chosen = battle.Grid.GetAllTiles()[0, 0];
+            /*Where(t => battle.CanPlaceOn(t, isPlayer: false))
             .OrderBy(t => Random.value)
-            .FirstOrDefault();
+            .FirstOrDefault();*/
 
         if (chosen == null)
         {

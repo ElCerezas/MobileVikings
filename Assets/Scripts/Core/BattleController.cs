@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using TMPro;
 using UnityEngine;
 
 public class BattleController : MonoBehaviour
@@ -36,6 +34,8 @@ public class BattleController : MonoBehaviour
     [Header("Scoring")]
     public int playerConquest = 3;
     public int enemmyConquest = 3;
+    [SerializeField]Transform enemyPlane;
+    [SerializeField]Transform playerPlane;
 
     private void Awake()
     {
@@ -66,7 +66,7 @@ public class BattleController : MonoBehaviour
     void StartTurn()
     {
         Debug.LogWarning("TURN STARTED "  + playerTurn);
-        
+        UpdateConquestTiles();
         List<Unit> activeUnits = playerTurn ? ActivePlayerUnits : ActiveEnemyUnits;
         ExecutePhase<IStartTurn>(activeUnits, (u, cb) => u.StartTurn(cb), () => { MovePhase(); });
         
@@ -155,26 +155,57 @@ public class BattleController : MonoBehaviour
         {
             Debug.Log("==ENEMY WIN===");
         }
+    }
+    public void UnitScore(UnitOwner owner, bool died) //Si ha muerto suma al rival, sino resta al rival
+    {
+        if(died)
+        {
+            if (owner == UnitOwner.Enemy)
+            {
+                playerConquest++;
+                enemmyConquest = Math.Min(enemmyConquest, gridSystem.Height - playerConquest);
+            }
+            else
+            {
+                enemmyConquest++;
+                playerConquest = Math.Min(playerConquest, gridSystem.Height - playerConquest);
+            }
+        }
         else
         {
-            StartCoroutine(StartTurnNextFrame());
+            if (owner == UnitOwner.Enemy) playerConquest--;
+            else enemmyConquest--;
         }
-    }
-    public void UnitDied(UnitOwner owner)
-    {
-        if (owner == UnitOwner.Enemy) playerConquest++;
-        else enemmyConquest++;
-    }
-    public void UnitReachedEnd(UnitOwner owner)
-    {
-        if (owner == UnitOwner.Enemy) playerConquest--;
-        else enemmyConquest--;
     }
     void UpdateConquestTiles()
     {
+        Tile[,] tiles = gridSystem.GetAllTiles();
+        int width = gridSystem.Width;
+        int height = gridSystem.Height;
 
+        for (int x = 0; x < width; x++)
+        {
+            for (int z = 0; z < height; z++)
+            {
+                Tile tile = tiles[x, z];
+
+                if (z < enemmyConquest)
+                {
+                    tile.SetOwner(TileOwner.Enemy);
+                }
+                else if (z >= height - playerConquest)
+                {
+                    tile.SetOwner(TileOwner.Player);
+                }
+                else
+                {
+                    tile.SetOwner(TileOwner.Neutral);
+                }
+            }
+        }
+        enemyPlane.position = Vector3.back * (enemmyConquest + 0.5f);
+        playerPlane.position = Vector3.back * ((height - playerConquest) + 0.5f);
     }
-
     #endregion
     System.Collections.IEnumerator StartTurnNextFrame()
     {
@@ -220,15 +251,15 @@ public class BattleController : MonoBehaviour
         unitPrefab = list[0];   
         return true;
     }*/
-    /*public bool ConsumeUnitToPlace(bool forPlayer, Unit expectedPrefab) //Eliminar unitat placed de unitats placed
-    {
-        var list = forPlayer ? playerUnitsToPlace : enemyUnitsToPlace;
-        if (list == null || list.Count == 0) return false;
+        /*public bool ConsumeUnitToPlace(bool forPlayer, Unit expectedPrefab) //Eliminar unitat placed de unitats placed
+        {
+            var list = forPlayer ? playerUnitsToPlace : enemyUnitsToPlace;
+            if (list == null || list.Count == 0) return false;
 
-        if (list[0] != expectedPrefab) return false;
+            if (list[0] != expectedPrefab) return false;
 
-        list.RemoveAt(0);
-        return true;
-    }*/
+            list.RemoveAt(0);
+            return true;
+        }*/
 
-}
+    }

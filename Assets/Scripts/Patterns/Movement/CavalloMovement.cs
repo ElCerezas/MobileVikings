@@ -13,7 +13,7 @@ public class CavalloMovement : MovementPattern
         {
             // casilla hacia adelante
             int intermediateY = currentY + (directionY * i);
-            Tile intermediateTile = GridSystem.Instance.GetTile(currentX, intermediateY);
+            Tile intermediateTile = GridSystem.instance.GetTile(currentX, intermediateY);
 
             if (intermediateTile == null) continue;
 
@@ -24,7 +24,7 @@ public class CavalloMovement : MovementPattern
             int targetX = currentX + lateralDirection;
             int targetY = intermediateY;
 
-            Tile targetTile = GridSystem.Instance.GetTile(targetX, targetY);
+            Tile targetTile = GridSystem.instance.GetTile(targetX, targetY);
             if (targetTile != null) targetTiles.Add(targetTile);
         }
 
