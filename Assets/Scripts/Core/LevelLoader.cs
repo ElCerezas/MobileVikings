@@ -79,13 +79,13 @@ public class LevelLoader : MonoBehaviour
         //Entities
         for (int i = 0; i < playerUnits.Length; i++)
         {
-            Unit u = Instantiate(playerUnits[0]);
+            Unit u = Instantiate(playerUnits[i]);
             u.Instantiate(UnitOwner.Player);
             UnitPlacementManager.instance.ReturnToDeck(u);
         }
         for (int i = 0; i < enemyUnits.Length; i++)
         {
-            Unit u = Instantiate(enemyUnits[0]);
+            Unit u = Instantiate(enemyUnits[i]);
             u.Instantiate(UnitOwner.Enemy);
             UnitPlacementManager.instance.ReturnToDeck(u);
         }

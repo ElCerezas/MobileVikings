@@ -1,6 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 public enum UnitOwner {Player, Enemy}
+[RequireComponent(typeof(UnitController))]
 public abstract class Unit : MonoBehaviour
 {
     protected UnitOwner owner;
@@ -12,6 +13,8 @@ public abstract class Unit : MonoBehaviour
     [SerializeField] protected int[] abilityModifiers = new int[3];
     [SerializeField][Min(1)] protected int maxLife;
     [SerializeField][Min(0)] protected int life;
+
+    public UnitController controller { get => GetComponent<UnitController>(); }
     public UnitOwner GetOwner()
     {
         return owner;
@@ -22,6 +25,7 @@ public abstract class Unit : MonoBehaviour
     }
     public virtual void Placement(Tile t, int _tier)
     {
+        controller.TurnCollider(false);
         life = maxLife;
         currentTile = t;
         tier = _tier;

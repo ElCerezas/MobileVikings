@@ -39,6 +39,7 @@ public class UnitPlacementManager : MonoBehaviour
         if (owner == UnitOwner.Player)
         {
             playerDeck.Add(unit);
+            unit.controller.TurnCollider(true);
             UpdateDeckVisuals(playerDeck, playerDeckOrigin, Vector3.right);
         }
         else
@@ -67,9 +68,15 @@ public class UnitPlacementManager : MonoBehaviour
     void ExecutePlacement(Unit unit, Tile tile)
     {
         unit.transform.position = tile.transform.position + (Vector3.up / 2);
-
         tile.SetNewOccupant(unit);
-        unit.Placement(tile, 1);
+        if (unit.GetOwner() == UnitOwner.Player)
+        {
+            unit.Placement(tile, 1);
+        }
+        else
+        {
+            unit.Placement(tile, 1);
+        }
         battleController.RegisterPlacedUnit(unit);
         if(finished != null) {
             finished?.Invoke();
@@ -123,10 +130,10 @@ public class UnitPlacementManager : MonoBehaviour
     #region Enemy Placement
     public void PlaceEnemyUnit(Unit unit, Tile targetTile)
     {
-        ExecutePlacement(unit, targetTile);
+        //ExecutePlacement(unit, targetTile);
 
-        enemyDeck.Remove(unit);
-        UpdateDeckVisuals(enemyDeck, enemyDeckOrigin, Vector3.right);
+        //enemyDeck.Remove(unit);
+        //UpdateDeckVisuals(enemyDeck, enemyDeckOrigin, Vector3.right);
     }
     #endregion
     
