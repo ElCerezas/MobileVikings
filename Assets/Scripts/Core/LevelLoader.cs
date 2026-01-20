@@ -15,6 +15,9 @@ public class LevelLoader : MonoBehaviour
     [SerializeField] GameObject tilePrefab;
     [SerializeField] Vector2Int atlasSize;
 
+    [SerializeField] Unit[] playerUnits;
+    [SerializeField] Unit[] enemyUnits;
+
     public LevelData LoadLevelFromResources(int id)
     {
         TextAsset jsonData = Resources.Load<TextAsset>(path);
@@ -74,6 +77,18 @@ public class LevelLoader : MonoBehaviour
         }
 
         //Entities
+        for (int i = 0; i < playerUnits.Length; i++)
+        {
+            Unit u = Instantiate(playerUnits[0]);
+            u.Instantiate(UnitOwner.Player);
+            UnitPlacementManager.instance.ReturnToDeck(u);
+        }
+        for (int i = 0; i < enemyUnits.Length; i++)
+        {
+            Unit u = Instantiate(enemyUnits[0]);
+            u.Instantiate(UnitOwner.Enemy);
+            UnitPlacementManager.instance.ReturnToDeck(u);
+        }
         /*for (int y = 0; y < level.dimensions[1]; y++)
         {
             string row = level.enemies[y];

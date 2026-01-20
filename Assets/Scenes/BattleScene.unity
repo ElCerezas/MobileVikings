@@ -194,7 +194,7 @@ Transform:
   m_GameObject: {fileID: 541351414}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10.40285, y: 0, z: -25.7859}
+  m_LocalPosition: {x: 10.19, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -339,7 +339,6 @@ GameObject:
   - component: {fileID: 941301595}
   - component: {fileID: 941301594}
   - component: {fileID: 941301596}
-  - component: {fileID: 941301597}
   m_Layer: 0
   m_Name: BattleManager
   m_TagString: Untagged
@@ -356,7 +355,7 @@ Transform:
   m_GameObject: {fileID: 941301592}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.75395, y: 0, z: 12.74723}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -388,6 +387,14 @@ MonoBehaviour:
     _serializedList: []
   tilePrefab: {fileID: 4620955632587718321, guid: 09b4c74e28ce71a49a08a3aeb9f1d909, type: 3}
   atlasSize: {x: 8, y: 8}
+  playerUnits:
+  - {fileID: 6036156260006942949, guid: c790b03a3bd81464aa8d3c3085b20f0e, type: 3}
+  - {fileID: 517743705148855450, guid: c295d4ec8c91bae44b4a4691a627918e, type: 3}
+  - {fileID: 500027928105952532, guid: 56e301043383351408d267b233024e45, type: 3}
+  enemyUnits:
+  - {fileID: 6036156260006942949, guid: c790b03a3bd81464aa8d3c3085b20f0e, type: 3}
+  - {fileID: 517743705148855450, guid: c295d4ec8c91bae44b4a4691a627918e, type: 3}
+  - {fileID: 500027928105952532, guid: 56e301043383351408d267b233024e45, type: 3}
 --- !u!114 &941301595
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -401,7 +408,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BattleController
   gridSystem: {fileID: 1722583516}
-  placementManager: {fileID: 0}
+  placementManager: {fileID: 433864571}
   levelLoader: {fileID: 941301594}
   enemyModule: {fileID: 941301596}
   currentTurn: 0
@@ -426,22 +433,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArtificialInteligence
   selectedUnit: {fileID: 6036156260006942949, guid: c790b03a3bd81464aa8d3c3085b20f0e, type: 3}
---- !u!114 &941301597
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 941301592}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 296a8d3fecc8bea42bbc39af083c8500, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerPlacementModule
-  battle: {fileID: 0}
-  waitingInput: 0
-  pendingPrefab: {fileID: 6036156260006942949, guid: c790b03a3bd81464aa8d3c3085b20f0e, type: 3}
-  finishedThisPhase: 0
 --- !u!1001 &1180281545
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -529,7 +520,7 @@ Transform:
   m_GameObject: {fileID: 1550950299}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10.40285, y: 0, z: -25.7859}
+  m_LocalPosition: {x: -7.97, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

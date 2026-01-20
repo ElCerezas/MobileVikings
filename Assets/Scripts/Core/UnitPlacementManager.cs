@@ -56,7 +56,7 @@ public class UnitPlacementManager : MonoBehaviour
         }
     }
 
-    bool CanPlaceOn(Tile tile, bool isPlayer) //S'ha de fer fix de terreny conquistat
+    bool CanPlaceOn(Tile tile, bool isPlayer) 
     {
         if (tile == null) return false;
         if (!tile.IsFree) return false;
