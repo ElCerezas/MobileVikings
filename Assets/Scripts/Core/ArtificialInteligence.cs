@@ -4,19 +4,28 @@ using UnityEngine;
 
 public class ArtificialInteligence : EnemyModule
 {
-    public enum Difficulty // convertir aixo en una classe
-    {
-        Easy, 
-        Medium,
-        Hard 
-    }
-    [SerializeField] private Difficulty difficulty = Difficulty.Medium;
     public Unit selectedUnit;
     public override void OnPlacementPhase(PlacementEnded onFinished)
     {
+        /*if (!battle.TryPeekUnitToPlace(forPlayer: false, out Unit unitPrefab))
+        {
+            onFinished?.Invoke();
+            return;
+        }*/
 
+        /*Tile chosen = battle.Grid.GetAllTiles()[0, 0];
+            /*Where(t => battle.CanPlaceOn(t, isPlayer: false))
+            .OrderBy(t => Random.value)
+            .FirstOrDefault();*/
 
-        //UnitPlacementManager.instance.PlaceEnemyUnit(selectedUnit, GridSystem.instance.GetTile(0,0)); Utilitzar per provar col·locació d'unitats
+        /*if (chosen == null)
+        {
+            Debug.Log("IA: no hay tiles enemigas libres para colocar.");
+            onFinished?.Invoke();
+            return;
+        }*/
+
+        UnitPlacementManager.instance.PlaceEnemyUnit(selectedUnit, GridSystem.instance.GetTile(0,0));
         onFinished?.Invoke();
     }
 }

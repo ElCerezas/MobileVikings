@@ -22,7 +22,6 @@ public class UnitPlacementManager : MonoBehaviour
     bool canPlaceUnit = false;
     PlacementEnded finished;
 
-
     private void Awake()
     {
         instance = this;
@@ -136,11 +135,7 @@ public class UnitPlacementManager : MonoBehaviour
         //enemyDeck.Remove(unit);
         //UpdateDeckVisuals(enemyDeck, enemyDeckOrigin, Vector3.right);
     }
-    public List<Unit> getEnemyDeck()
-    {
-        return enemyDeck;
-    }
     #endregion
-
+    
 }
 
