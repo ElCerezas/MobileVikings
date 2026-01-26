@@ -136,7 +136,7 @@ public class UnitPlacementManager : MonoBehaviour
         //enemyDeck.Remove(unit);
         //UpdateDeckVisuals(enemyDeck, enemyDeckOrigin, Vector3.right);
     }
-    public List<Unit> getEnemyDeck()
+    public List<Unit> GetEnemyDeck()
     {
         return enemyDeck;
     }
