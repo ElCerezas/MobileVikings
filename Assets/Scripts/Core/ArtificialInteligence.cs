@@ -26,7 +26,7 @@ public class ArtificialInteligence : EnemyModule
             return;
         }
 
-        List<Tile> tile = GetPlaceableEnemyTiles();
+        List<Tile> tile = GridSystem.instance.GetRegisteredTiles(TileOwner.Enemy);
 
         if (tile == null || tile.Count == 0)
         {
@@ -40,27 +40,9 @@ public class ArtificialInteligence : EnemyModule
         onFinished?.Invoke();
     }
 
-    private List<Tile> GetPlaceableEnemyTiles()
-    {
-        Tile[,] allTies = GridSystem.instance.GetAllTiles();
-
-        List<Tile> placeableTiles = new List<Tile>();
-        for (int x = 0; x < GridSystem.instance.Width; x++)
-        {
-            for (int y = 0; y < GridSystem.instance.Height; y++) 
-            { 
-                Tile currentTile = allTies[x, y];
-                if (currentTile != null && currentTile.owner == TileOwner.Enemy)  
-                {
-                    placeableTiles.Add(currentTile);
-                }
-            }
-        }
-        return placeableTiles;
-    }
-
     private void chooseBestMove(List<Unit> deck, List<Tile> possibleTiles, out Unit bestUnit, out Tile bestTile)
     {
+
         bestUnit = null;
         bestTile = null;
     }

@@ -35,5 +35,21 @@ public class GridSystem : MonoBehaviour
     {
         return tiles;
     }
+    public List<Tile> GetRegisteredTiles(TileOwner tileOwner)
+    {
+        List<Tile> placeableTiles = new List<Tile>();
+        for (int x = 0; x < GridSystem.instance.Width; x++)
+        {
+            for (int y = 0; y < GridSystem.instance.Height; y++)
+            {
+                Tile currentTile = GetAllTiles()[x, y];
+                if (currentTile != null && currentTile.owner == TileOwner.Enemy)
+                {
+                    placeableTiles.Add(currentTile);
+                }
+            }
+        }
+        return placeableTiles;
+    }
 
 }
