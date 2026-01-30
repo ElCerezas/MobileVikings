@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using static BattleController;
-using static UnityEngine.UI.GridLayoutGroup;
+using Unity.Netcode;
 
 public class UnitPlacementManager : MonoBehaviour
 {
@@ -49,7 +49,7 @@ public class UnitPlacementManager : MonoBehaviour
             UpdateDeckVisuals(enemyDeck, enemyDeckOrigin, Vector3.right);
         }
     }
-    private void UpdateDeckVisuals(List<Unit> deck, Transform origin, Vector3 direction) //Gepeteada de manual, quin pal escriure lol
+    public void UpdateDeckVisuals(List<Unit> deck, Transform origin, Vector3 direction) //Gepeteada de manual, quin pal escriure lol
     {
         for (int i = 0; i < deck.Count; i++)
         {
@@ -107,7 +107,8 @@ public class UnitPlacementManager : MonoBehaviour
     {
         selectedUnit = null;
     }
-    public void PlayerTryPlace(Tile targetTile)
+    /*Old script
+     * public void PlayerTryPlace(Tile targetTile)
     {
         if (!canPlaceUnit) return;
         if (selectedUnit == null) return;
@@ -125,6 +126,51 @@ public class UnitPlacementManager : MonoBehaviour
         else
         {
             Debug.Log("Colocación inválida.");
+        }
+    }*/
+    public void PlayerTryPlace(Tile targetTile)
+    {
+        if (!canPlaceUnit) return;
+        if (selectedUnit == null) return;
+
+        bool amIHost = NetworkManager.Singleton.IsServer;
+        if (BattleController.instance.playerTurn && !amIHost) return;
+
+        if (!BattleController.instance.playerTurn && amIHost) return;
+
+        bool isMyZone = amIHost ? (targetTile.owner == TileOwner.Player) : (targetTile.owner == TileOwner.Enemy);
+        if (!isMyZone) return;
+
+        List<Unit> myDeck = amIHost ? playerDeck : enemyDeck;
+        int index = myDeck.IndexOf(selectedUnit);
+
+        if (index != -1)
+        {
+            PvPHandler.instance.TryPlaceUnit(index, targetTile.x, targetTile.y);
+            canPlaceUnit = false;
+            DeselectUnit();
+        }
+    }
+    public void ExecuteNetworkPlacement(int unitIndex, int x, int y, bool isHostAction)
+    {
+        Tile targetTile = GridSystem.instance.GetTile(x, y);
+        Unit unitToPlace = null;
+        List<Unit> deckToUse = isHostAction ? playerDeck : enemyDeck;
+
+        if (unitIndex < deckToUse.Count)
+        {
+            unitToPlace = deckToUse[unitIndex];
+
+            unitToPlace.transform.position = targetTile.transform.position + (Vector3.up / 2);
+            targetTile.SetNewOccupant(unitToPlace);
+            unitToPlace.Placement(targetTile, 1);
+            BattleController.instance.RegisterPlacedUnit(unitToPlace);
+
+            deckToUse.Remove(unitToPlace);
+            Transform origin = isHostAction ? playerDeckOrigin : enemyDeckOrigin;
+            UpdateDeckVisuals(deckToUse, origin, Vector3.right); // Asegúrate de que este método sea accesible
+
+            BattleController.instance.EndPlacementPhase();
         }
     }
     #endregion

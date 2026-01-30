@@ -43,7 +43,7 @@ public class BattleController : MonoBehaviour
     }
     private void Start()
     {
-        //Debug.LogWarning("0.Start");
+        /*//Debug.LogWarning("0.Start");
         levelLoader.GenerateLevel(levelLoader.LoadLevelFromResources(levelId));
         Debug.LogWarning("Level Loaded " + levelLoader);
         playerTurn = CoinFlip();
@@ -52,11 +52,17 @@ public class BattleController : MonoBehaviour
         playerActedThisRound = false;
         enemyActedThisRound = false;
 
+        StartTurn();*/
+    }
+    public void StartPvPGame()
+    {
+        levelLoader.GenerateLevel(levelLoader.LoadLevelFromResources(levelId));
+        playerTurn = CoinFlip();
         StartTurn();
     }
     bool CoinFlip()
     {
-        return UnityEngine.Random.Range(0, 2) == 0 ? false : true;
+        return UnityEngine.Random.Range(0, 2) != 0;
     }
     void PlaceStatues()
     {
@@ -181,6 +187,10 @@ public class BattleController : MonoBehaviour
         playerPlane.position = Vector3.back * ((height - playerConquest) + 0.5f);
     }
     #endregion
+    public void EndPlacementPhase()
+    {
+        EndTurn();
+    }
     public void RegisterPlacedUnit(Unit unit) //Afegir unitat a unitats activas
     {
         if (unit.GetOwner() == UnitOwner.Player) ActivePlayerUnits.Add(unit);
