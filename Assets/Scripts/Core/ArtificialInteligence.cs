@@ -36,7 +36,7 @@ public class ArtificialInteligence : EnemyModule
 
         chooseBestMove(deck, tile, out bestUnit, out bestTile);
         UnitPlacementManager.instance.PlaceEnemyUnit(bestUnit, bestTile);
-        //UnitPlacementManager.instance.PlaceEnemyUnit(selectedUnit, GridSystem.instance.GetTile(0,0)); Utilitzar per provar col·locació d'unitats
+        //UnitPlacementManager.instance.PlaceEnemyUnit(bestUnit, GridSystem.instance.GetTile(0,0)); //Utilitzar per provar col·locació d'unitats
         onFinished?.Invoke();
     }
 
