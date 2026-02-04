@@ -130,23 +130,29 @@ public class UnitPlacementManager : MonoBehaviour
     }*/
     public void PlayerTryPlace(Tile targetTile)
     {
-        if (!canPlaceUnit) return;
-        if (selectedUnit == null) return;
+        if (!canPlaceUnit || selectedUnit == null) return;
+
+        // REGLA DE ORO: Para ambos, su zona es la de abajo (TileOwner.Player)
+        // porque visualmente el tablero está configurado igual para los dos.
+        if (targetTile.owner != TileOwner.Player)
+        {
+            Debug.Log("Solo puedes colocar en tu zona (abajo)");
+            return;
+        }
 
         bool amIHost = NetworkManager.Singleton.IsServer;
-        if (BattleController.instance.playerTurn && !amIHost) return;
 
-        if (!BattleController.instance.playerTurn && amIHost) return;
+        // Validar turno
+        if (BattleController.instance.playerTurn != amIHost) return;
 
-        bool isMyZone = amIHost ? (targetTile.owner == TileOwner.Player) : (targetTile.owner == TileOwner.Enemy);
-        if (!isMyZone) return;
-
-        List<Unit> myDeck = amIHost ? playerDeck : enemyDeck;
-        int index = myDeck.IndexOf(selectedUnit);
+        // Buscamos la unidad en el mazo (Cada uno usa su playerDeck local)
+        int index = playerDeck.IndexOf(selectedUnit);
 
         if (index != -1)
         {
+            // Enviamos las coordenadas TAL CUAL las vemos en nuestra pantalla
             PvPHandler.instance.TryPlaceUnit(index, targetTile.x, targetTile.y);
+
             canPlaceUnit = false;
             DeselectUnit();
         }
@@ -154,21 +160,38 @@ public class UnitPlacementManager : MonoBehaviour
     public void ExecuteNetworkPlacement(int unitIndex, int x, int y, bool isHostAction)
     {
         Tile targetTile = GridSystem.instance.GetTile(x, y);
+        bool amIHost = NetworkManager.Singleton.IsServer;
+
         Unit unitToPlace = null;
-        List<Unit> deckToUse = isHostAction ? playerDeck : enemyDeck;
+        List<Unit> deckToUse;
+
+        // ¿La unidad es mía o del rival?
+        bool isMyUnit = (amIHost == isHostAction);
+
+        if (isMyUnit)
+        {
+            deckToUse = playerDeck; // Mi mazo (abajo)
+        }
+        else
+        {
+            deckToUse = enemyDeck; // Mazo rival (arriba)
+        }
 
         if (unitIndex < deckToUse.Count)
         {
             unitToPlace = deckToUse[unitIndex];
 
-            unitToPlace.transform.position = targetTile.transform.position + (Vector3.up / 2);
+            // Lógica de spawn
+            unitToPlace.transform.position = targetTile.transform.position + (Vector3.up * 0.5f);
             targetTile.SetNewOccupant(unitToPlace);
-            unitToPlace.Placement(targetTile, 1);
+
+            // Registrar según quién la puso (para que el combate sepa de quién es)
+            //unitToPlace.(isMyUnit ? UnitOwner.Player : UnitOwner.Enemy);
             BattleController.instance.RegisterPlacedUnit(unitToPlace);
 
+            // Limpiar mazo visual
             deckToUse.Remove(unitToPlace);
-            Transform origin = isHostAction ? playerDeckOrigin : enemyDeckOrigin;
-            UpdateDeckVisuals(deckToUse, origin, Vector3.right); // Asegúrate de que este método sea accesible
+            UpdateDeckVisuals(deckToUse, isMyUnit ? playerDeckOrigin : enemyDeckOrigin, Vector3.right);
 
             BattleController.instance.EndPlacementPhase();
         }
